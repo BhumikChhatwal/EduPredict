@@ -1,0 +1,621 @@
+{
+  "subject": "mat",
+  "feature_set": "early",
+  "family": "RandomForest",
+  "params": {
+    "max_depth": 12,
+    "min_samples_leaf": 4,
+    "n_estimators": 500
+  },
+  "chosen": "tuned",
+  "rows_train": 316,
+  "rows_test": 79,
+  "dataset_sha256": "e47f9ee225e1ee6e69b7564e6dac7123e80b8486677fe111f351964cef5dec80",
+  "metrics": {
+    "rmse": 4.086223125303643,
+    "mae": 3.1430420669622294,
+    "r2": 0.19627825583720537,
+    "mean_residual": 0.0663698355814461,
+    "mae_absolute_max": 11.20437244944598,
+    "within_2_marks": 0.4430379746835443
+  },
+  "clipped_predictions": 0,
+  "prediction_range": [
+    2.5696729717994415,
+    13.482803750116984
+  ],
+  "bands": {
+    "critical": {
+      "n": 26,
+      "mae": 4.433350048327473,
+      "rmse": 5.402572838370048,
+      "mean_residual": 4.358412087402419,
+      "mean_actual": 5.538461538461538,
+      "mean_predicted": 9.896873625863957
+    },
+    "watch": {
+      "n": 33,
+      "mae": 1.548436170158774,
+      "rmse": 2.080859813364195,
+      "mean_residual": -0.79214148009898,
+      "mean_actual": 11.424242424242424,
+      "mean_predicted": 10.632100944143446
+    },
+    "on_track": {
+      "n": 15,
+      "mae": 3.2760475645464937,
+      "rmse": 3.636406109557373,
+      "mean_residual": -3.2760475645464937,
+      "mean_actual": 14.866666666666667,
+      "mean_predicted": 11.590619102120174
+    },
+    "strong": {
+      "n": 5,
+      "mae": 6.558822990012979,
+      "rmse": 6.617502691364163,
+      "mean_residual": -6.558822990012979,
+      "mean_actual": 18.4,
+      "mean_predicted": 11.841177009987021
+    }
+  },
+  "cv_rmse": 3.855824089465602,
+  "cv_mae": 2.951011655498818,
+  "untuned_cv_rmse": 3.878150729549033,
+  "untuned_cv_mae": 2.9277228835978835,
+  "baseline_cv_rmse": 4.590048509600551,
+  "predictions": [
+    {
+      "row_index": 1,
+      "band": "critical",
+      "actual": 6.0,
+      "predicted": 10.575173588373387,
+      "residual": 4.575173588373387
+    },
+    {
+      "row_index": 2,
+      "band": "watch",
+      "actual": 10.0,
+      "predicted": 8.216517754003071,
+      "residual": -1.7834822459969288
+    },
+    {
+      "row_index": 7,
+      "band": "critical",
+      "actual": 6.0,
+      "predicted": 10.473326654554594,
+      "residual": 4.473326654554594
+    },
+    {
+      "row_index": 8,
+      "band": "strong",
+      "actual": 19.0,
+      "predicted": 12.685622990734755,
+      "residual": -6.314377009265245
+    },
+    {
+      "row_index": 13,
+      "band": "watch",
+      "actual": 11.0,
+      "predicted": 11.226915817189356,
+      "residual": 0.22691581718935616
+    },
+    {
+      "row_index": 16,
+      "band": "on_track",
+      "actual": 14.0,
+      "predicted": 13.482803750116984,
+      "residual": -0.5171962498830158
+    },
+    {
+      "row_index": 20,
+      "band": "on_track",
+      "actual": 15.0,
+      "predicted": 13.172865800865798,
+      "residual": -1.8271341991342016
+    },
+    {
+      "row_index": 33,
+      "band": "watch",
+      "actual": 12.0,
+      "predicted": 11.020665535118484,
+      "residual": -0.9793344648815161
+    },
+    {
+      "row_index": 37,
+      "band": "on_track",
+      "actual": 15.0,
+      "predicted": 12.18523318578566,
+      "residual": -2.814766814214339
+    },
+    {
+      "row_index": 39,
+      "band": "watch",
+      "actual": 13.0,
+      "predicted": 9.896319585969584,
+      "residual": -3.103680414030416
+    },
+    {
+      "row_index": 57,
+      "band": "on_track",
+      "actual": 15.0,
+      "predicted": 13.298027719502715,
+      "residual": -1.7019722804972854
+    },
+    {
+      "row_index": 61,
+      "band": "watch",
+      "actual": 11.0,
+      "predicted": 10.170924141218263,
+      "residual": -0.8290758587817368
+    },
+    {
+      "row_index": 64,
+      "band": "watch",
+      "actual": 10.0,
+      "predicted": 11.588538813963803,
+      "residual": 1.5885388139638028
+    },
+    {
+      "row_index": 66,
+      "band": "watch",
+      "actual": 12.0,
+      "predicted": 12.360419773088966,
+      "residual": 0.36041977308896556
+    },
+    {
+      "row_index": 67,
+      "band": "critical",
+      "actual": 6.0,
+      "predicted": 11.048895006249342,
+      "residual": 5.048895006249342
+    },
+    {
+      "row_index": 69,
+      "band": "on_track",
+      "actual": 16.0,
+      "predicted": 10.835752400789035,
+      "residual": -5.164247599210965
+    },
+    {
+      "row_index": 70,
+      "band": "on_track",
+      "actual": 15.0,
+      "predicted": 12.185174857919852,
+      "residual": -2.8148251420801476
+    },
+    {
+      "row_index": 78,
+      "band": "watch",
+      "actual": 10.0,
+      "predicted": 8.749267922703375,
+      "residual": -1.2507320772966253
+    },
+    {
+      "row_index": 80,
+      "band": "watch",
+      "actual": 12.0,
+      "predicted": 10.253589738039732,
+      "residual": -1.7464102619602677
+    },
+    {
+      "row_index": 81,
+      "band": "watch",
+      "actual": 11.0,
+      "predicted": 10.974078140813443,
+      "residual": -0.025921859186556873
+    },
+    {
+      "row_index": 86,
+      "band": "critical",
+      "actual": 6.0,
+      "predicted": 11.709492186245136,
+      "residual": 5.709492186245136
+    },
+    {
+      "row_index": 89,
+      "band": "critical",
+      "actual": 7.0,
+      "predicted": 11.260003362650414,
+      "residual": 4.260003362650414
+    },
+    {
+      "row_index": 92,
+      "band": "critical",
+      "actual": 6.0,
+      "predicted": 10.724163334541277,
+      "residual": 4.724163334541277
+    },
+    {
+      "row_index": 97,
+      "band": "watch",
+      "actual": 10.0,
+      "predicted": 9.839606202718848,
+      "residual": -0.16039379728115222
+    },
+    {
+      "row_index": 104,
+      "band": "strong",
+      "actual": 18.0,
+      "predicted": 10.331701229180176,
+      "residual": -7.668298770819824
+    },
+    {
+      "row_index": 107,
+      "band": "strong",
+      "actual": 18.0,
+      "predicted": 12.972696333666333,
+      "residual": -5.027303666333667
+    },
+    {
+      "row_index": 111,
+      "band": "watch",
+      "actual": 10.0,
+      "predicted": 2.5696729717994415,
+      "residual": -7.4303270282005585
+    },
+    {
+      "row_index": 113,
+      "band": "strong",
+      "actual": 19.0,
+      "predicted": 12.046416590031173,
+      "residual": -6.953583409968827
+    },
+    {
+      "row_index": 118,
+      "band": "critical",
+      "actual": 8.0,
+      "predicted": 9.87792947738537,
+      "residual": 1.8779294773853703
+    },
+    {
+      "row_index": 121,
+      "band": "on_track",
+      "actual": 15.0,
+      "predicted": 11.950707511932505,
+      "residual": -3.049292488067495
+    },
+    {
+      "row_index": 126,
+      "band": "watch",
+      "actual": 11.0,
+      "predicted": 11.403244893994897,
+      "residual": 0.4032448939948967
+    },
+    {
+      "row_index": 136,
+      "band": "critical",
+      "actual": 0.0,
+      "predicted": 8.71944669219669,
+      "residual": 8.71944669219669
+    },
+    {
+      "row_index": 154,
+      "band": "watch",
+      "actual": 12.0,
+      "predicted": 8.81389702797203,
+      "residual": -3.186102972027969
+    },
+    {
+      "row_index": 156,
+      "band": "watch",
+      "actual": 13.0,
+      "predicted": 10.88151075248281,
+      "residual": -2.1184892475171893
+    },
+    {
+      "row_index": 163,
+      "band": "watch",
+      "actual": 10.0,
+      "predicted": 11.83586451881451,
+      "residual": 1.8358645188145104
+    },
+    {
+      "row_index": 170,
+      "band": "critical",
+      "actual": 0.0,
+      "predicted": 3.5231381451881476,
+      "residual": 3.5231381451881476
+    },
+    {
+      "row_index": 179,
+      "band": "watch",
+      "actual": 11.0,
+      "predicted": 11.899379814956289,
+      "residual": 0.8993798149562888
+    },
+    {
+      "row_index": 188,
+      "band": "critical",
+      "actual": 9.0,
+      "predicted": 11.051402453200401,
+      "residual": 2.051402453200401
+    },
+    {
+      "row_index": 194,
+      "band": "on_track",
+      "actual": 14.0,
+      "predicted": 11.041842150821605,
+      "residual": -2.958157849178395
+    },
+    {
+      "row_index": 211,
+      "band": "watch",
+      "actual": 13.0,
+      "predicted": 11.094030423987777,
+      "residual": -1.9059695760122235
+    },
+    {
+      "row_index": 218,
+      "band": "critical",
+      "actual": 8.0,
+      "predicted": 10.654534953934947,
+      "residual": 2.654534953934947
+    },
+    {
+      "row_index": 225,
+      "band": "critical",
+      "actual": 7.0,
+      "predicted": 11.409511406502006,
+      "residual": 4.409511406502006
+    },
+    {
+      "row_index": 226,
+      "band": "on_track",
+      "actual": 15.0,
+      "predicted": 10.422131972948902,
+      "residual": -4.577868027051098
+    },
+    {
+      "row_index": 227,
+      "band": "watch",
+      "actual": 12.0,
+      "predicted": 12.756198532023523,
+      "residual": 0.7561985320235234
+    },
+    {
+      "row_index": 237,
+      "band": "watch",
+      "actual": 12.0,
+      "predicted": 10.413558769117598,
+      "residual": -1.5864412308824019
+    },
+    {
+      "row_index": 241,
+      "band": "watch",
+      "actual": 12.0,
+      "predicted": 10.973158204867024,
+      "residual": -1.0268417951329756
+    },
+    {
+      "row_index": 245,
+      "band": "strong",
+      "actual": 18.0,
+      "predicted": 11.16944790632267,
+      "residual": -6.83055209367733
+    },
+    {
+      "row_index": 246,
+      "band": "watch",
+      "actual": 13.0,
+      "predicted": 11.977759715331098,
+      "residual": -1.0222402846689018
+    },
+    {
+      "row_index": 248,
+      "band": "critical",
+      "actual": 5.0,
+      "predicted": 10.576093248418257,
+      "residual": 5.576093248418257
+    },
+    {
+      "row_index": 254,
+      "band": "watch",
+      "actual": 12.0,
+      "predicted": 10.91943132645133,
+      "residual": -1.0805686735486706
+    },
+    {
+      "row_index": 255,
+      "band": "critical",
+      "actual": 8.0,
+      "predicted": 10.894110018412968,
+      "residual": 2.8941100184129684
+    },
+    {
+      "row_index": 256,
+      "band": "watch",
+      "actual": 13.0,
+      "predicted": 12.421650962684664,
+      "residual": -0.5783490373153359
+    },
+    {
+      "row_index": 259,
+      "band": "critical",
+      "actual": 0.0,
+      "predicted": 11.20437244944598,
+      "residual": 11.20437244944598
+    },
+    {
+      "row_index": 270,
+      "band": "critical",
+      "actual": 9.0,
+      "predicted": 8.025806507974302,
+      "residual": -0.974193492025698
+    },
+    {
+      "row_index": 301,
+      "band": "watch",
+      "actual": 10.0,
+      "predicted": 12.80330187035187,
+      "residual": 2.80330187035187
+    },
+    {
+      "row_index": 307,
+      "band": "critical",
+      "actual": 8.0,
+      "predicted": 10.585903413253419,
+      "residual": 2.585903413253419
+    },
+    {
+      "row_index": 313,
+      "band": "watch",
+      "actual": 11.0,
+      "predicted": 11.708313524384108,
+      "residual": 0.7083135243841081
+    },
+    {
+      "row_index": 314,
+      "band": "watch",
+      "actual": 13.0,
+      "predicted": 9.56913910631852,
+      "residual": -3.43086089368148
+    },
+    {
+      "row_index": 317,
+      "band": "critical",
+      "actual": 9.0,
+      "predicted": 10.231297712578671,
+      "residual": 1.2312977125786713
+    },
+    {
+      "row_index": 321,
+      "band": "critical",
+      "actual": 9.0,
+      "predicted": 10.2279895915007,
+      "residual": 1.2279895915007
+    },
+    {
+      "row_index": 322,
+      "band": "watch",
+      "actual": 11.0,
+      "predicted": 11.603402387427382,
+      "residual": 0.6034023874273817
+    },
+    {
+      "row_index": 323,
+      "band": "on_track",
+      "actual": 15.0,
+      "predicted": 12.277269498083616,
+      "residual": -2.7227305019163843
+    },
+    {
+      "row_index": 329,
+      "band": "on_track",
+      "actual": 14.0,
+      "predicted": 10.91327479154832,
+      "residual": -3.0867252084516803
+    },
+    {
+      "row_index": 332,
+      "band": "critical",
+      "actual": 0.0,
+      "predicted": 10.632977652347646,
+      "residual": 10.632977652347646
+    },
+    {
+      "row_index": 333,
+      "band": "critical",
+      "actual": 0.0,
+      "predicted": 8.230213433788428,
+      "residual": 8.230213433788428
+    },
+    {
+      "row_index": 337,
+      "band": "critical",
+      "actual": 0.0,
+      "predicted": 10.86876518213813,
+      "residual": 10.86876518213813
+    },
+    {
+      "row_index": 340,
+      "band": "watch",
+      "actual": 11.0,
+      "predicted": 10.673005874517635,
+      "residual": -0.32699412548236495
+    },
+    {
+      "row_index": 344,
+      "band": "watch",
+      "actual": 10.0,
+      "predicted": 10.600308838982363,
+      "residual": 0.6003088389823628
+    },
+    {
+      "row_index": 345,
+      "band": "on_track",
+      "actual": 14.0,
+      "predicted": 12.226342626915564,
+      "residual": -1.7736573730844363
+    },
+    {
+      "row_index": 346,
+      "band": "on_track",
+      "actual": 16.0,
+      "predicted": 11.481552120102126,
+      "residual": -4.518447879897874
+    },
+    {
+      "row_index": 355,
+      "band": "critical",
+      "actual": 9.0,
+      "predicted": 9.861924669774675,
+      "residual": 0.861924669774675
+    },
+    {
+      "row_index": 356,
+      "band": "watch",
+      "actual": 13.0,
+      "predicted": 10.51889856320151,
+      "residual": -2.4811014367984896
+    },
+    {
+      "row_index": 363,
+      "band": "on_track",
+      "actual": 15.0,
+      "predicted": 8.101029819853343,
+      "residual": -6.898970180146657
+    },
+    {
+      "row_index": 364,
+      "band": "watch",
+      "actual": 12.0,
+      "predicted": 9.43378605143082,
+      "residual": -2.56621394856918
+    },
+    {
+      "row_index": 370,
+      "band": "critical",
+      "actual": 9.0,
+      "predicted": 9.68776095287581,
+      "residual": 0.6877609528758093
+    },
+    {
+      "row_index": 378,
+      "band": "on_track",
+      "actual": 15.0,
+      "predicted": 10.285278324616566,
+      "residual": -4.714721675383434
+    },
+    {
+      "row_index": 383,
+      "band": "critical",
+      "actual": 0.0,
+      "predicted": 3.9344773504273522,
+      "residual": 3.9344773504273522
+    },
+    {
+      "row_index": 393,
+      "band": "watch",
+      "actual": 10.0,
+      "predicted": 11.692973600809538,
+      "residual": 1.6929736008095375
+    },
+    {
+      "row_index": 394,
+      "band": "critical",
+      "actual": 9.0,
+      "predicted": 11.33000482850483,
+      "residual": 2.33000482850483
+    }
+  ]
+}

@@ -22,7 +22,8 @@ API, analytics endpoints and dashboard follow it.
 | 4 | Exploratory analysis | Not started |
 | 5 | Features and preprocessing | Complete |
 | 6 | Model training and selection | Complete — candidates compared, selected family tuned |
-| 7–8 | Evaluation and serialization | Not started |
+| 7 | Evaluation on held-out rows | Complete — metrics and per-band errors in `ml/artifacts/evaluation/` |
+| 8 | Serialization and inference | Not started |
 | 9–11 | API, persistence, tests | Not started |
 | 12–14 | Frontend | Not started |
 | 15–16 | Documentation, cleanup | Not started |

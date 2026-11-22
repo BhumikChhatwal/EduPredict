@@ -299,6 +299,16 @@ def save_record(payload: dict[str, Any]) -> Path:
     return path
 
 
+def load_record(subject: str, feature_set: str) -> dict[str, Any]:
+    """Read a tuning record: the configuration the final evaluation will fit."""
+    path = tuned_path(subject, feature_set)
+    if not path.exists():
+        raise FileNotFoundError(
+            f"No tuning record at {path}. Run `python -m ml.training.tune` first."
+        )
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def format_report(payloads: list[dict[str, Any]]) -> str:
     lines = [
         "Hyperparameter tuning - selected family only, same folds as the comparison",
