@@ -1,0 +1,43 @@
+:root {
+  /* Surfaces */
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-muted: #fafbfc;
+  --border: #e2e5ea;
+  --border-strong: #cdd3db;
+
+  /* Typography */
+  --text: #101b2d;
+  --text-muted: #5c6a7d;
+  --text-subtle: #8794a5;
+
+  /* Accent and semantics. One accent colour, semantic colours only for state. */
+  --accent: #1f5aa6;
+  --accent-soft: #eaf1fa;
+  --positive: #1c6b4f;
+  --warning: #8a6212;
+  --critical: #9e2f2a;
+
+  /* Form */
+  --radius: 6px;
+  --shadow: 0 1px 2px rgba(16, 27, 45, 0.06);
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Type */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 28px;
+}

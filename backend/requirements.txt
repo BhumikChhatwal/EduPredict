@@ -1,0 +1,22 @@
+# Versions pinned to the set installed and verified during Phase 1
+# (Python 3.12.3, Windows). Re-verify after any upgrade by re-running the
+# training pipeline and the test suite.
+
+# Web service
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+pydantic==2.14.4
+
+# Data and machine learning
+numpy==2.5.5
+pandas==2.3.3
+scikit-learn==1.9.1
+joblib==1.6.0
+
+# Analysis and reporting figures
+matplotlib==3.11.2
+seaborn==0.13.2
+
+# Tests
+pytest==8.4.2
+httpx==0.28.1
