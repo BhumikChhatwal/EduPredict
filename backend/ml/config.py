@@ -149,6 +149,26 @@ CATEGORICAL_COLUMNS = (
     "romantic",
 )
 
+# Ordinal attributes: ordered integers, so they are passed through as numbers instead of
+# one-hot expanded. One-hot would throw away the order, which is real information here.
+ORDINAL_COLUMNS = (
+    "Medu",
+    "Fedu",
+    "traveltime",
+    "studytime",
+    "famrel",
+    "freetime",
+    "goout",
+    "Dalc",
+    "Walc",
+    "health",
+)
+
+# Nominal attributes: no order, so they are one-hot encoded.
+NOMINAL_COLUMNS = tuple(
+    column for column in CATEGORICAL_COLUMNS if column not in ORDINAL_COLUMNS
+)
+
 NUMERIC_COLUMNS = (
     "age",
     "Medu",

@@ -142,6 +142,25 @@ def build_features(frame: pd.DataFrame, feature_set: str) -> pd.DataFrame:
     return out
 
 
+def feature_matrix(frame: pd.DataFrame, feature_set: str) -> pd.DataFrame:
+    """Return the engineered frame restricted to the model inputs, in a fixed order.
+
+    This is the single entry point for producing X. Selecting the columns here means the
+    encoder and the trainer always receive exactly the documented features, with no
+    accidental extras (such as `G3` or the generated ID) slipping into the matrix.
+    """
+    built = build_features(frame, feature_set)
+    columns = list(feature_columns(feature_set))
+
+    missing = [column for column in columns if column not in built.columns]
+    if missing:
+        raise load.DatasetSchemaError(
+            f"Cannot build feature matrix for {feature_set!r}: missing {missing}."
+        )
+
+    return built.loc[:, columns].copy()
+
+
 def validate_derived(
     frame: pd.DataFrame, feature_set: str, subject: str = "unknown"
 ) -> dict[str, Any]:
