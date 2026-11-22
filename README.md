@@ -11,18 +11,18 @@ which attributes influenced each estimate.
 
 ## Status
 
-Early development. The repository currently contains the project skeleton, the
-approved architecture, and a running API and frontend toolchain. Machine learning,
-analytics endpoints and the dashboard are being built milestone by milestone.
+Early development. The offline ML pipeline is being built milestone by milestone; the
+API, analytics endpoints and dashboard follow it.
 
 | Phase | Milestone | State |
 |---|---|---|
 | 1 | Environment and skeleton | Complete |
-| 2 | Dataset loading | Not started |
-| 3 | Cleaning and validation | Not started |
+| 2 | Dataset loading | Complete |
+| 3 | Cleaning and validation | Complete (validated; no cleaning was required) |
 | 4 | Exploratory analysis | Not started |
-| 5 | Features and preprocessing | Not started |
-| 6–8 | Model training, evaluation, serialization | Not started |
+| 5 | Features and preprocessing | Complete |
+| 6 | Model training and selection | In progress — candidates compared, tuning next |
+| 7–8 | Evaluation and serialization | Not started |
 | 9–11 | API, persistence, tests | Not started |
 | 12–14 | Frontend | Not started |
 | 15–16 | Documentation, cleanup | Not started |
