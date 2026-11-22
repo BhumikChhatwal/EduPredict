@@ -21,7 +21,7 @@ API, analytics endpoints and dashboard follow it.
 | 3 | Cleaning and validation | Complete (validated; no cleaning was required) |
 | 4 | Exploratory analysis | Not started |
 | 5 | Features and preprocessing | Complete |
-| 6 | Model training and selection | In progress — candidates compared, tuning next |
+| 6 | Model training and selection | Complete — candidates compared, selected family tuned |
 | 7–8 | Evaluation and serialization | Not started |
 | 9–11 | API, persistence, tests | Not started |
 | 12–14 | Frontend | Not started |

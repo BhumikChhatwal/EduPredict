@@ -1,0 +1,65 @@
+{
+  "subject": "por",
+  "feature_set": "with_grades",
+  "family": "LinearRegression",
+  "rows_used": 519,
+  "folds": 5,
+  "fold_seed": 42,
+  "fold_sizes": [
+    104,
+    104,
+    104,
+    104,
+    103
+  ],
+  "dataset_sha256": "a7594a11d7771c0efe1a740824e0e833da9c4cad07c39a9766a874575563fb3f",
+  "grid": {
+    "model__fit_intercept": [
+      true,
+      false
+    ]
+  },
+  "combos": 2,
+  "search": [
+    {
+      "params": {
+        "fit_intercept": true
+      },
+      "rmse_mean": 1.299431043181762,
+      "rmse_std": 0.208027955884625,
+      "train_rmse": 1.1716716942071455
+    },
+    {
+      "params": {
+        "fit_intercept": false
+      },
+      "rmse_mean": 12.01468526154257,
+      "rmse_std": 0.14394123794895758,
+      "train_rmse": 11.99970824522634
+    }
+  ],
+  "best_params": {
+    "fit_intercept": true
+  },
+  "best_train_rmse": 1.1716716942071455,
+  "tuned_metrics": {
+    "rmse": 1.299431043181762,
+    "rmse_std": 0.208027955884625,
+    "mae": 0.8403725232012658,
+    "r2": 0.8280015520698634
+  },
+  "untuned": {
+    "model": "LinearRegression",
+    "metrics": {
+      "rmse": 1.299431043181762,
+      "rmse_std": 0.208027955884625,
+      "mae": 0.8403725232012658,
+      "r2": 0.8280015520698634
+    }
+  },
+  "baseline_rmse": 3.1674899512065426,
+  "chosen": "untuned",
+  "chosen_params": {},
+  "improvement_over_untuned": 0.0,
+  "improvement_over_baseline": 1.8680589080247807
+}

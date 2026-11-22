@@ -231,12 +231,30 @@ def compare(
     }
 
 
+def results_path(subject: str, feature_set: str) -> Path:
+    return CV_DIR / f"{subject}__{feature_set}.json"
+
+
 def save_results(payload: dict[str, Any]) -> Path:
     """Write the comparison record beside the other artifacts."""
     CV_DIR.mkdir(parents=True, exist_ok=True)
-    path = CV_DIR / f"{payload['subject']}__{payload['feature_set']}.json"
+    path = results_path(payload["subject"], payload["feature_set"])
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     return path
+
+
+def load_results(subject: str, feature_set: str) -> dict[str, Any]:
+    """Read a saved comparison record.
+
+    Tuning takes its family from this file rather than being told, so the thing being
+    tuned is always the thing that actually won the comparison.
+    """
+    path = results_path(subject, feature_set)
+    if not path.exists():
+        raise FileNotFoundError(
+            f"No comparison record at {path}. Run `python -m ml.training.compare` first."
+        )
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def format_report(payloads: list[dict[str, Any]]) -> str:
