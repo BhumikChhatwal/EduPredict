@@ -12,7 +12,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Request
 
 from app.core import config
-from ml import risk
+from ml import cbse, config as ml_config, risk
 from ml.inference import predict as inference
 
 router = APIRouter(prefix="/model", tags=["model"])
@@ -25,6 +25,7 @@ def model_info(request: Request) -> dict[str, Any]:
 
     models = []
     for metadata in store.all_metadata():
+        metrics = metadata["metrics"]
         models.append(
             {
                 "subject": metadata["subject"],
@@ -36,6 +37,7 @@ def model_info(request: Request) -> dict[str, Any]:
                 "metadata_schema": metadata["metadata_schema"],
                 "target": metadata["target"],
                 "target_range": metadata["target_range"],
+                "target_range_marks": [0, int(cbse.MARKS_MAX)],
                 "trained_at": metadata["trained_at"],
                 "runtime": metadata["runtime"],
                 "rows_train": metadata["rows_train"],
@@ -47,9 +49,27 @@ def model_info(request: Request) -> dict[str, Any]:
                     "encoded_count": metadata["features"]["encoded_count"],
                     "names": metadata["features"]["names"],
                 },
-                "metrics": metadata["metrics"],
+                # Errors are converted to CBSE marks; R2 is unitless and unchanged.
+                "metrics": {
+                    **metrics,
+                    "cv_rmse": cbse.to_marks(metrics["cv_rmse"], 2),
+                    "cv_mae": cbse.to_marks(metrics["cv_mae"], 2),
+                    "baseline_cv_rmse": cbse.to_marks(
+                        metrics["baseline_cv_rmse"], 2
+                    ),
+                    "test_rmse": cbse.to_marks(metrics["test_rmse"], 2),
+                    "test_mae": cbse.to_marks(metrics["test_mae"], 2),
+                    "within_10_marks": metrics["within_2_marks"],
+                },
                 "bands": metadata["bands"],
-                "feature_importance": metadata["feature_importance"][:10],
+                "feature_importance": [
+                    {
+                        "feature": row["feature"],
+                        "importance": cbse.to_marks(row["importance"], 2),
+                        "std": cbse.to_marks(row["std"], 2),
+                    }
+                    for row in metadata["feature_importance"][:10]
+                ],
             }
         )
 
@@ -58,11 +78,25 @@ def model_info(request: Request) -> dict[str, Any]:
             "subject": config.DEFAULT_SUBJECT,
             "feature_set": config.DEFAULT_FEATURE_SET,
         },
+        "subject_labels": dict(ml_config.SUBJECT_LABELS),
+        "grade_scale": {
+            "marks_max": int(cbse.MARKS_MAX),
+            "native_max": int(ml_config.NUMERIC_RANGES[ml_config.TARGET][1]),
+            "conversion": "CBSE marks = native grade x 5",
+            "pass_marks": int(cbse.PASS_MARKS),
+            "grade_letters": cbse.letter_ranges(),
+            "letter_basis": (
+                "CBSE absolute scholastic grades at school level (classes IX-X); the "
+                "class X board result uses relative grading, which a single estimate "
+                "cannot reproduce."
+            ),
+        },
         "models": models,
         "risk_bands": risk.band_ranges(),
         "risk_band_policy": (
-            "Bands are fixed cut-offs on the predicted grade, chosen for this product. "
-            "They are not learned and not an institutional standard."
+            "Bands are fixed cut-offs on predicted CBSE marks, chosen for this product. "
+            "The lowest starts at the board's 33% pass mark; they are not learned and "
+            "not an institutional standard."
         ),
         "feature_sets": {
             "early": (

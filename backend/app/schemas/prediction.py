@@ -23,7 +23,6 @@ class StudentAttributes(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    school: Literal["GP", "MS"]
     sex: Literal["F", "M"]
     age: int = Field(ge=15, le=22)
     address: Literal["R", "U"]
@@ -70,7 +69,11 @@ class PredictionRequest(BaseModel):
 
 
 class PredictionEstimate(BaseModel):
+    # Native dataset scale (0-20), kept so the artifact's own units stay visible.
     grade: float
+    # CBSE marks out of 100, the board's letter, and the product band on that scale.
+    marks: float
+    grade_letter: str
     band: str
     interval: list[float]
     interval_basis: str
@@ -83,7 +86,7 @@ class PredictionContext(BaseModel):
     test_r2: float
     cv_rmse: float
     baseline_cv_rmse: float
-    within_2_marks: float
+    within_10_marks: float
     rows_train: int
     rows_test: int
     dataset_sha256: str
@@ -150,6 +153,7 @@ class StoredPrediction(BaseModel):
     model_version: str
     family: str
     predicted_g3: float
+    predicted_marks: float
     risk_band: str
     attributes: dict[str, Any]
     created_at: str

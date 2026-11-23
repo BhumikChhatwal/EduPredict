@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 
 from app.core import dataset, db
-from ml import config, risk
+from ml import cbse, config, risk
 from ml.training import compare
 
 # Attributes offered for the "mean grade by attribute" view. Numeric grades are excluded
@@ -82,9 +82,13 @@ def _round(value: float | None, places: int = 3) -> float | None:
 
 
 def _band_counts(frame: pd.DataFrame) -> dict[str, int]:
-    """Rows per risk band, keyed in the documented band order."""
+    """Rows per risk band, keyed in the documented band order.
+
+    Band cuts are CBSE marks, so the dataset's native 0-20 grades are converted first.
+    """
+    marks = frame[config.TARGET] * cbse.MARKS_PER_POINT
     bands = pd.cut(
-        frame[config.TARGET],
+        marks,
         bins=config.RISK_BAND_EDGES,
         labels=config.RISK_BAND_LABELS,
         right=False,
@@ -99,17 +103,20 @@ def subject_stats(subject: str) -> dict[str, Any]:
     """Descriptive statistics for one subject's final grades."""
     frame = dataset.frame(subject)
     grades = frame[config.TARGET]
+    marks = grades * cbse.MARKS_PER_POINT
 
     return {
         "subject": subject,
+        "label": config.SUBJECT_LABELS[subject],
         "rows": int(len(frame)),
-        "mean": _round(grades.mean()),
-        "median": _round(grades.median()),
-        "std": _round(grades.std()),
-        "min": int(grades.min()),
-        "max": int(grades.max()),
-        "pass_rate": _round(float((grades >= 10).mean())),
-        "at_risk": int((grades < 10).sum()),
+        # Reported on the CBSE 0-100 scale; the artifact's native scale is 0-20.
+        "mean": _round(marks.mean()),
+        "median": _round(marks.median()),
+        "std": _round(marks.std()),
+        "min": int(marks.min()),
+        "max": int(marks.max()),
+        "pass_rate": _round(float((marks >= cbse.PASS_MARKS).mean())),
+        "at_risk": int((marks < cbse.PASS_MARKS).sum()),
         "bands": _band_counts(frame),
         "mean_absences": _round(frame["absences"].mean()),
         "mean_studytime": _round(frame["studytime"].mean()),
@@ -153,11 +160,11 @@ def summary() -> dict[str, Any]:
 
 
 def distribution(subject: str | None = None) -> dict[str, Any]:
-    """Counts per grade point (0-20) for one subject, or both side by side.
+    """Counts per 5-mark step on the CBSE scale, for one subject or both side by side.
 
-    Integers are used as bins rather than ranges because the scale itself is discrete:
-    a histogram of 0-20 with five-point bins would hide the pass threshold, which is the
-    only boundary that matters here.
+    The dataset records 21 integer grades; multiplying by five gives 21 discrete points
+    on a 0-100 scale, so the histogram keeps one bar per recorded grade and nothing is
+    smoothed away.
     """
     subjects = [subject] if subject else list(config.SUBJECTS)
     series = []
@@ -173,7 +180,10 @@ def distribution(subject: str | None = None) -> dict[str, Any]:
                 "subject": name,
                 "n": int(counts.sum()),
                 "counts": [
-                    {"grade": int(grade), "count": int(count)}
+                    {
+                        "grade": int(round(grade * cbse.MARKS_PER_POINT)),
+                        "count": int(count),
+                    }
                     for grade, count in counts.items()
                 ],
             }
@@ -181,7 +191,7 @@ def distribution(subject: str | None = None) -> dict[str, Any]:
 
     return {
         "subjects": series,
-        "pass_mark": 10,
+        "pass_mark": int(cbse.PASS_MARKS),
     }
 
 
@@ -226,7 +236,7 @@ def attribute_breakdown(subject: str, attribute: str) -> dict[str, Any]:
         {
             "value": int(value) if isinstance(value, (np.integer, int)) else str(value),
             "n": int(aggregate.loc[value, "count"]),
-            "mean": _round(aggregate.loc[value, "mean"], 2),
+            "mean": cbse.to_marks(aggregate.loc[value, "mean"], 1),
         }
         for value in aggregate.index
     ]
@@ -236,7 +246,7 @@ def attribute_breakdown(subject: str, attribute: str) -> dict[str, Any]:
     return {
         "subject": subject,
         "attribute": attribute,
-        "overall_mean": _round(overall, 2),
+        "overall_mean": cbse.to_marks(overall, 1),
         "n": int(len(frame)),
         "groups": rows,
         "caveat": (
@@ -258,15 +268,15 @@ def feature_importance(subject: str, feature_set: str, limit: int = 14) -> dict[
         "rows": [
             {
                 "feature": row["feature"],
-                "importance": _round(row["importance"], 3),
-                "std": _round(row["std"], 3),
+                "importance": cbse.to_marks(row["importance"], 2),
+                "std": cbse.to_marks(row["std"], 2),
             }
             for row in rows
         ],
         "basis": (
-            "Permutation importance on the held-out rows: the increase in RMSE when one "
-            "feature is shuffled. Descriptive, not causal, and unstable when features "
-            "are correlated."
+            "Permutation importance on the held-out rows: the increase in RMSE, in CBSE "
+            "marks, when one feature is shuffled. Descriptive, not causal, and unstable "
+            "when features are correlated."
         ),
     }
 
@@ -287,9 +297,9 @@ def model_comparison() -> dict[str, Any]:
                         "name": result["name"],
                         "baseline": result["baseline"],
                         "selected": result["name"] == record["selected"],
-                        "cv_rmse": _round(result["rmse_mean"]),
-                        "cv_rmse_std": _round(result["rmse_std"]),
-                        "cv_mae": _round(result["mae_mean"]),
+                        "cv_rmse": cbse.to_marks(result["rmse_mean"], 2),
+                        "cv_rmse_std": cbse.to_marks(result["rmse_std"], 2),
+                        "cv_mae": cbse.to_marks(result["mae_mean"], 2),
                         "cv_r2": _round(result["r2_mean"]),
                     }
                 )
@@ -302,13 +312,17 @@ def model_comparison() -> dict[str, Any]:
                     "family": metadata["family"],
                     "chosen": metadata["chosen"],
                     "params": metadata["params"],
-                    "cv_rmse": _round(metadata["metrics"]["cv_rmse"]),
-                    "cv_mae": _round(metadata["metrics"]["cv_mae"]),
-                    "baseline_cv_rmse": _round(metadata["metrics"]["baseline_cv_rmse"]),
-                    "test_rmse": _round(metadata["metrics"]["test_rmse"]),
-                    "test_mae": _round(metadata["metrics"]["test_mae"]),
+                    "cv_rmse": cbse.to_marks(metadata["metrics"]["cv_rmse"], 2),
+                    "cv_mae": cbse.to_marks(metadata["metrics"]["cv_mae"], 2),
+                    "baseline_cv_rmse": cbse.to_marks(
+                        metadata["metrics"]["baseline_cv_rmse"], 2
+                    ),
+                    "test_rmse": cbse.to_marks(metadata["metrics"]["test_rmse"], 2),
+                    "test_mae": cbse.to_marks(metadata["metrics"]["test_mae"], 2),
                     "test_r2": _round(metadata["metrics"]["test_r2"]),
-                    "within_2_marks": _round(metadata["metrics"]["within_2_marks"]),
+                    # The artifact records "within 2 native points"; on the CBSE scale
+                    # that same tolerance is ten marks.
+                    "within_10_marks": _round(metadata["metrics"]["within_2_marks"]),
                     "rows_train": metadata["rows_train"],
                     "rows_test": metadata["rows_test"],
                 }
@@ -330,8 +344,9 @@ def subject_comparison() -> dict[str, Any]:
     return {
         "subjects": [subject_stats(subject) for subject in config.SUBJECTS],
         "caveat": (
-            "The two files share schools and likely students but cover different "
-            "courses; they are separate populations and are never pooled."
+            "The two cohorts share schools and likely students but cover different "
+            "courses; they are separate populations and are never pooled. The language "
+            "cohort is Portuguese-language data, presented as the language subject."
         ),
     }
 

@@ -12,7 +12,7 @@ from typing import Any
 import pandas as pd
 
 from app.core import dataset
-from ml import config
+from ml import cbse, config
 from ml.data import load
 
 
@@ -26,9 +26,10 @@ def _row(frame: pd.DataFrame, subject: str, position: int) -> dict[str, Any]:
         "studytime": int(record["studytime"]),
         "failures": int(record["failures"]),
         "absences": int(record["absences"]),
-        "G1": int(record["G1"]),
-        "G2": int(record["G2"]),
-        "G3": int(record["G3"]),
+        # Period grades and the final grade are reported in CBSE marks.
+        "G1": int(round(record["G1"] * cbse.MARKS_PER_POINT)),
+        "G2": int(round(record["G2"] * cbse.MARKS_PER_POINT)),
+        "G3": int(round(record["G3"] * cbse.MARKS_PER_POINT)),
         "band": dataset.band_of(record["G3"]),
     }
 
@@ -85,14 +86,18 @@ def get_student(student_id: str) -> dict[str, Any]:
     """Full attribute record for one student, plus the band derived from the actual grade."""
     subject, record = dataset.find_student(student_id)
 
-    attributes = {
-        column: (
-            int(record[column])
-            if column in config.NUMERIC_COLUMNS
-            else str(record[column])
-        )
-        for column in config.EXPECTED_COLUMNS
-    }
+    attributes = {}
+    for column in config.EXPECTED_COLUMNS:
+        # The CBSE product does not expose the dataset's school code.
+        if column in config.EXCLUDED_FEATURES:
+            continue
+        value = record[column]
+        if column in config.GRADE_COLUMNS:
+            attributes[column] = int(round(value * cbse.MARKS_PER_POINT))
+        elif column in config.NUMERIC_COLUMNS:
+            attributes[column] = int(value)
+        else:
+            attributes[column] = str(value)
 
     return {
         "student_id": str(record[load.ID_COLUMN]),
@@ -100,7 +105,8 @@ def get_student(student_id: str) -> dict[str, Any]:
         "attributes": attributes,
         "band": dataset.band_of(record[config.TARGET]),
         "note": (
-            "Record from the public UCI dataset. The ID is a generated row index, not an "
-            "anonymised real identifier."
+            "Record from the public UCI dataset, with period and final grades converted "
+            "from the native 0-20 scale to CBSE marks out of 100. The ID is a generated "
+            "row index, not an anonymised real identifier."
         ),
     }

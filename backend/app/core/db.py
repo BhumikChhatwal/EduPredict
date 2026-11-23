@@ -21,6 +21,7 @@ from datetime import datetime, timezone
 from typing import Any, Iterator
 
 from app.core import config
+from ml import cbse
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS predictions (
@@ -75,6 +76,8 @@ def _row_to_dict(row: sqlite3.Row) -> dict[str, Any]:
         "model_version": row["model_version"],
         "family": row["family"],
         "predicted_g3": float(row["predicted_g3"]),
+        # Stored on the dataset's native scale, shown on the CBSE marks scale.
+        "predicted_marks": cbse.to_marks(row["predicted_g3"], 1),
         "risk_band": row["risk_band"],
         "attributes": json.loads(row["payload_json"]),
         "created_at": row["created_at"],

@@ -30,6 +30,7 @@ def options() -> dict[str, Any]:
 
     return {
         "subjects": list(config.SUBJECTS),
+        "subject_labels": dict(config.SUBJECT_LABELS),
         "feature_sets": ["early", "with_grades"],
         "risk_bands": risk.band_ranges(),
         "breakdown_attributes": list(analytics.BREAKDOWN_ATTRIBUTES),

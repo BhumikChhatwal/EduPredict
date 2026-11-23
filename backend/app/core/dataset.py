@@ -16,7 +16,7 @@ from typing import Any
 
 import pandas as pd
 
-from ml import config, risk
+from ml import cbse, config, risk
 from ml.data import load
 
 
@@ -50,8 +50,8 @@ def require_subject(subject: str) -> str:
 
 
 def band_of(grade: float) -> str:
-    """Band label for a grade, via the documented risk policy."""
-    return risk.band_label(grade)
+    """Band label for a native 0-20 grade, via the documented CBSE band policy."""
+    return risk.band_label(cbse.to_marks(grade))
 
 
 def find_student(student_id: str) -> tuple[str, pd.Series]:
