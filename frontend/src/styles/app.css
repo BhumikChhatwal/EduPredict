@@ -138,11 +138,19 @@
 
 .page-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-4);
   padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--border);
+}
+
+/* The text keeps a readable measure; below that the action drops to its own row
+   instead of squeezing the description into a narrow column. */
+.page-head > div {
+  flex: 1 1 260px;
+  min-width: 0;
 }
 
 .eyebrow {
@@ -199,6 +207,12 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
+/* Four model summaries read as a 2x2 grid: a 340px floor would fit three tracks and
+   leave the fourth card orphaned on a wide viewport. min() keeps one column on phones. */
+.grid-model {
+  grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+}
+
 /* ---------- Metric cards ---------- */
 
 .metric {
@@ -235,6 +249,7 @@
 
 .frame-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-4);
@@ -256,6 +271,7 @@
 
 .frame-actions {
   flex: none;
+  min-width: 0;
 }
 
 .frame-body {
@@ -277,8 +293,10 @@
 
 .inline-controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
+  min-width: 0;
 }
 
 /* ---------- Controls ---------- */
@@ -847,10 +865,14 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  overflow-x: auto;
 }
 
+/* A 16x16 matrix squeezed into a phone column scales its labels down to nothing, so
+   the grid keeps a readable minimum width and the wrapper scrolls instead. */
 .heatmap {
   width: 100%;
+  min-width: 480px;
   height: auto;
   max-height: 460px;
 }
@@ -1077,7 +1099,16 @@ a:focus-visible {
     font-size: var(--text-xl);
   }
 
+  .page-actions {
+    padding-top: 0;
+  }
+
   .model-figures {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* A chart header's controls move to their own row instead of pushing the page wide. */
+  .frame-actions {
+    flex: 1 1 100%;
   }
 }

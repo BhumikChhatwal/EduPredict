@@ -36,7 +36,7 @@ export default function Model() {
         description="Four fitted pipelines, two per subject. This page reads the saved metadata: the chosen family, its parameters, the measured error, and how the estimates behave by band."
       />
 
-      <div className="grid grid-2">
+      <div className="grid grid-model">
         {models.map((model) => (
           <article className="card model-summary" key={keyOf(model)}>
             <header className="model-summary-head">
