@@ -1,0 +1,78 @@
+{
+  "mat": {
+    "rows": 395,
+    "g3_mean": 10.415,
+    "g3_median": 11.0,
+    "g3_std": 4.581,
+    "g3_min": 0,
+    "g3_max": 20,
+    "grade_zero_rows": 38,
+    "pass_rate": 0.6709,
+    "bands": {
+      "critical": 130,
+      "watch": 165,
+      "on_track": 76,
+      "strong": 24
+    },
+    "correlation_with_g3": {
+      "G2": 0.905,
+      "G1": 0.801,
+      "absences": 0.034,
+      "failures": -0.36,
+      "studytime": 0.098,
+      "goout": -0.133,
+      "Medu": 0.217,
+      "age": -0.162
+    },
+    "mean_g3_by_failures": {
+      "0": 11.25,
+      "1": 8.12,
+      "2": 6.24,
+      "3": 5.69
+    },
+    "mean_g3_by_studytime": {
+      "1": 10.05,
+      "2": 10.17,
+      "3": 11.4,
+      "4": 11.26
+    }
+  },
+  "por": {
+    "rows": 649,
+    "g3_mean": 11.906,
+    "g3_median": 12.0,
+    "g3_std": 3.231,
+    "g3_min": 0,
+    "g3_max": 19,
+    "grade_zero_rows": 15,
+    "pass_rate": 0.8459,
+    "bands": {
+      "critical": 100,
+      "watch": 355,
+      "on_track": 148,
+      "strong": 46
+    },
+    "correlation_with_g3": {
+      "G2": 0.919,
+      "G1": 0.826,
+      "absences": -0.091,
+      "failures": -0.393,
+      "studytime": 0.25,
+      "goout": -0.088,
+      "Medu": 0.24,
+      "age": -0.107
+    },
+    "mean_g3_by_failures": {
+      "0": 12.51,
+      "1": 8.64,
+      "2": 8.81,
+      "3": 8.07
+    },
+    "mean_g3_by_studytime": {
+      "1": 10.84,
+      "2": 12.09,
+      "3": 13.23,
+      "4": 13.06
+    }
+  }
+}
