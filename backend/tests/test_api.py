@@ -88,6 +88,23 @@ def test_model_info_lists_all_four_models_with_their_metrics(client: TestClient)
     assert body["limitations"]
 
 
+def test_model_info_exposes_the_target_and_its_scale(client: TestClient) -> None:
+    """The Model page states what is predicted; the route must keep reshaping these through.
+
+    `/info` rebuilds each model's metadata rather than returning it verbatim, so a field
+    can disappear without any artifact changing. The interface reads `target` and
+    `target_range` to caption the provenance line, and an empty caption shipped once
+    because the route dropped them.
+    """
+    body = client.get("/api/model/info").json()
+
+    assert len(body["models"]) == 4
+    for model in body["models"]:
+        assert model["target"] == "G3"
+        assert model["target_range"] == [0.0, 20.0]
+        assert model["metadata_schema"] >= 1
+
+
 def test_raw_artifact_endpoint_matches_the_serializer(client: TestClient) -> None:
     response = client.get("/api/model/artifact/mat/early")
 
