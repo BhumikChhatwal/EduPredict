@@ -1,0 +1,366 @@
+{
+  "metadata_schema": 1,
+  "model_version": "1.0.0",
+  "trained_at": "2026-11-22T18:05:48+00:00",
+  "runtime": {
+    "python": "3.12.3",
+    "scikit_learn": "1.9.1",
+    "numpy": "2.5.5",
+    "pandas": "2.3.3"
+  },
+  "subject": "por",
+  "feature_set": "early",
+  "family": "RandomForest",
+  "params": {
+    "max_depth": 12,
+    "min_samples_leaf": 4,
+    "n_estimators": 500
+  },
+  "chosen": "tuned",
+  "target": "G3",
+  "target_range": [
+    0.0,
+    20.0
+  ],
+  "rows_train": 519,
+  "rows_test": 130,
+  "dataset_sha256": "a7594a11d7771c0efe1a740824e0e833da9c4cad07c39a9766a874575563fb3f",
+  "split": {
+    "test_size": 0.2,
+    "seed": 42,
+    "stratification_edges": [
+      0,
+      10,
+      14,
+      17,
+      21
+    ],
+    "folds": 5
+  },
+  "features": {
+    "count": 36,
+    "encoded_count": 62,
+    "names": [
+      "school",
+      "sex",
+      "age",
+      "address",
+      "famsize",
+      "Pstatus",
+      "Medu",
+      "Fedu",
+      "Mjob",
+      "Fjob",
+      "reason",
+      "guardian",
+      "traveltime",
+      "studytime",
+      "failures",
+      "schoolsup",
+      "famsup",
+      "paid",
+      "activities",
+      "nursery",
+      "higher",
+      "internet",
+      "romantic",
+      "famrel",
+      "freetime",
+      "goout",
+      "Dalc",
+      "Walc",
+      "health",
+      "absences",
+      "parent_edu_mean",
+      "parent_edu_max",
+      "parent_edu_gap",
+      "alc_total",
+      "support_total",
+      "failures_any"
+    ]
+  },
+  "metrics": {
+    "cv_rmse": 2.553158366445905,
+    "cv_mae": 1.9236531385014715,
+    "baseline_cv_rmse": 3.1674899512065426,
+    "test_rmse": 3.2485081935705837,
+    "test_mae": 2.145759765031455,
+    "test_r2": 0.09484181174116924,
+    "test_mean_residual": 0.5696688571112993,
+    "within_2_marks": 0.6384615384615384,
+    "worst_error": 14.64552965178612,
+    "clipped_predictions": 0
+  },
+  "bands": {
+    "critical": {
+      "n": 20,
+      "mae": 5.185163323125115,
+      "rmse": 6.6678105846249585,
+      "mean_residual": 4.865220190098013,
+      "mean_actual": 6.35,
+      "mean_predicted": 11.215220190098012
+    },
+    "watch": {
+      "n": 71,
+      "mae": 1.4032354953347923,
+      "rmse": 1.819726607234035,
+      "mean_residual": 0.6751121047155395,
+      "mean_actual": 11.366197183098592,
+      "mean_predicted": 12.041309287814132
+    },
+    "on_track": {
+      "n": 30,
+      "mae": 1.4434236158835538,
+      "rmse": 2.016482508139692,
+      "mean_residual": -1.2955779155328218,
+      "mean_actual": 14.633333333333333,
+      "mean_predicted": 13.33775541780051
+    },
+    "strong": {
+      "n": 9,
+      "mae": 3.5903415940344416,
+      "rmse": 3.7353410104966795,
+      "mean_residual": -3.5903415940344416,
+      "mean_actual": 17.333333333333332,
+      "mean_predicted": 13.742991739298894
+    }
+  },
+  "risk_bands": {
+    "edges": [
+      0,
+      10,
+      14,
+      17,
+      21
+    ],
+    "labels": [
+      "critical",
+      "watch",
+      "on_track",
+      "strong"
+    ],
+    "policy": "Product policy on the predicted grade, not learned from the data."
+  },
+  "feature_importance": [
+    {
+      "feature": "higher",
+      "importance": 0.07510730060686903,
+      "std": 0.035983057254839516
+    },
+    {
+      "feature": "failures",
+      "importance": 0.05911690882792682,
+      "std": 0.02988624431120229
+    },
+    {
+      "feature": "failures_any",
+      "importance": 0.05081788950486512,
+      "std": 0.02693389995222442
+    },
+    {
+      "feature": "studytime",
+      "importance": 0.030943544316085703,
+      "std": 0.02877857705917603
+    },
+    {
+      "feature": "alc_total",
+      "importance": 0.028929083814371294,
+      "std": 0.03805960621151706
+    },
+    {
+      "feature": "schoolsup",
+      "importance": 0.02319206272214851,
+      "std": 0.012755199389512766
+    },
+    {
+      "feature": "activities",
+      "importance": 0.012140983666947136,
+      "std": 0.006257216781589187
+    },
+    {
+      "feature": "absences",
+      "importance": 0.012027887111165026,
+      "std": 0.0282320193340793
+    },
+    {
+      "feature": "romantic",
+      "importance": 0.010888865412964766,
+      "std": 0.004751731183332893
+    },
+    {
+      "feature": "address",
+      "importance": 0.010302612668391387,
+      "std": 0.010606803385376937
+    },
+    {
+      "feature": "school",
+      "importance": 0.010195718399154164,
+      "std": 0.02029773681229319
+    },
+    {
+      "feature": "freetime",
+      "importance": 0.007534276302284493,
+      "std": 0.00882687366278991
+    },
+    {
+      "feature": "sex",
+      "importance": 0.007319406993633137,
+      "std": 0.0068875404392866445
+    },
+    {
+      "feature": "famrel",
+      "importance": 0.0052337494537035845,
+      "std": 0.01139274643342735
+    },
+    {
+      "feature": "health",
+      "importance": 0.005169049318327712,
+      "std": 0.00407180141345187
+    },
+    {
+      "feature": "internet",
+      "importance": 0.0030370341340307584,
+      "std": 0.004902468705867077
+    },
+    {
+      "feature": "Fedu",
+      "importance": 0.0018026931930612555,
+      "std": 0.006837601571990251
+    },
+    {
+      "feature": "Dalc",
+      "importance": 0.0013589370526720045,
+      "std": 0.0021315143469771433
+    },
+    {
+      "feature": "goout",
+      "importance": 0.0011731951180313338,
+      "std": 0.0034962524675963046
+    },
+    {
+      "feature": "support_total",
+      "importance": 0.0004094406017045138,
+      "std": 0.00823062656773268
+    },
+    {
+      "feature": "reason",
+      "importance": 0.0003166249122076081,
+      "std": 0.01733778290775163
+    },
+    {
+      "feature": "nursery",
+      "importance": -7.856330415556556e-05,
+      "std": 0.0012518550923115226
+    },
+    {
+      "feature": "Pstatus",
+      "importance": -0.00047255432022694774,
+      "std": 0.0006465349921149239
+    },
+    {
+      "feature": "paid",
+      "importance": -0.0005847150919222166,
+      "std": 0.0008539370509214396
+    },
+    {
+      "feature": "Fjob",
+      "importance": -0.001597181880235432,
+      "std": 0.006354674287515081
+    },
+    {
+      "feature": "traveltime",
+      "importance": -0.0017250832811734006,
+      "std": 0.0026441114004520793
+    },
+    {
+      "feature": "guardian",
+      "importance": -0.0025491607145086805,
+      "std": 0.002188672846790027
+    },
+    {
+      "feature": "famsup",
+      "importance": -0.003024111958489328,
+      "std": 0.005339796375666707
+    },
+    {
+      "feature": "famsize",
+      "importance": -0.00482890365154649,
+      "std": 0.004155530761856692
+    },
+    {
+      "feature": "parent_edu_gap",
+      "importance": -0.008125653399762367,
+      "std": 0.013224679044159653
+    },
+    {
+      "feature": "age",
+      "importance": -0.010459861905050261,
+      "std": 0.015000153152543801
+    },
+    {
+      "feature": "Walc",
+      "importance": -0.014178248559062112,
+      "std": 0.007615997173382233
+    },
+    {
+      "feature": "parent_edu_max",
+      "importance": -0.02477877363440193,
+      "std": 0.015180090566564329
+    },
+    {
+      "feature": "Mjob",
+      "importance": -0.02842422495988668,
+      "std": 0.016452134482125295
+    },
+    {
+      "feature": "Medu",
+      "importance": -0.02917200303587828,
+      "std": 0.022096227355816067
+    },
+    {
+      "feature": "parent_edu_mean",
+      "importance": -0.037819504880429025,
+      "std": 0.03510427524989049
+    }
+  ],
+  "reference_values": {
+    "school": "GP",
+    "sex": "F",
+    "age": 17.0,
+    "address": "U",
+    "famsize": "GT3",
+    "Pstatus": "T",
+    "Medu": 2.0,
+    "Fedu": 2.0,
+    "Mjob": "other",
+    "Fjob": "other",
+    "reason": "course",
+    "guardian": "mother",
+    "traveltime": 1.0,
+    "studytime": 2.0,
+    "failures": 0.0,
+    "schoolsup": "no",
+    "famsup": "yes",
+    "paid": "no",
+    "activities": "no",
+    "nursery": "yes",
+    "higher": "yes",
+    "internet": "yes",
+    "romantic": "no",
+    "famrel": 4.0,
+    "freetime": 3.0,
+    "goout": 3.0,
+    "Dalc": 1.0,
+    "Walc": 2.0,
+    "health": 4.0,
+    "absences": 2.0,
+    "parent_edu_mean": 2.0,
+    "parent_edu_max": 3.0,
+    "parent_edu_gap": 0.0,
+    "alc_total": 3.0,
+    "support_total": 1.0,
+    "failures_any": 0.0
+  },
+  "artifact": "por__early.joblib",
+  "artifact_bytes": 4829114
+}
