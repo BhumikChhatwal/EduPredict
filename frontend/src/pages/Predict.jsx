@@ -17,6 +17,7 @@ import {
   humanize,
 } from "../components/ui";
 import { DEFAULT_ATTRIBUTES, FIELD_GROUPS, GRADE_FIELDS } from "../data/formFields";
+import { SUBJECT_LABELS, subjectLabel } from "../data/subjects";
 import { api } from "../services/api";
 
 const ACCENT = "#1f5aa6";
@@ -65,7 +66,7 @@ export default function Predict() {
       <PageHeader
         eyebrow="Predict"
         title="Estimate a final grade"
-        description="Fill in what is known about the student. The estimate comes from the saved model, with its measured error and the attributes that moved it. The model was trained on Portuguese school records, so read it as an early-warning aid for an Indian classroom, not a calibrated local prediction."
+        description="Fill in what is known about the student. The estimate is reported as CBSE marks out of 100 with the board's grade letter, beside the model's measured error and the attributes that moved it. The model was trained on Portuguese school records, so read it as an early-warning aid for a CBSE classroom, not a calibrated local prediction."
       />
 
       <div className="predict-layout">
@@ -77,8 +78,11 @@ export default function Predict() {
                 value={subject}
                 onChange={(event) => setSubject(event.target.value)}
               >
-                <option value="mat">Mathematics</option>
-                <option value="por">Portuguese</option>
+                {Object.entries(SUBJECT_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </label>
 
@@ -208,11 +212,12 @@ function EmptyResult() {
       <p className="eyebrow">Result</p>
       <h2 className="result-empty-title">No estimate yet</h2>
       <p className="result-empty-body">
-        Submit the form to see the estimated grade, the band it falls in, the model's
-        measured error, and which attributes raised or lowered this particular estimate.
+        Submit the form to see the estimated CBSE marks, the grade letter and band they
+        fall in, the model's measured error, and which attributes raised or lowered this
+        particular estimate.
       </p>
       <ul className="plain-list">
-        <li>The estimate is a statistical prediction, not a grade the student will get.</li>
+        <li>The estimate is a statistical prediction, not the marks a student will get.</li>
         <li>Contributions are correlational, not causal, and not advice.</li>
         <li>Attendance is never predicted; recorded absences is only an input.</li>
       </ul>
@@ -236,18 +241,19 @@ function Result({ result }) {
         <div className="result-head">
           <div>
             <p className="eyebrow">
-              Estimate - {result.subject.toUpperCase()} / {result.feature_set.replace("_", " ")}
+              Estimate - {subjectLabel(result.subject)} / {result.feature_set.replace("_", " ")}
             </p>
             <p className="result-grade tabular">
-              {formatNumber(estimate.grade, 1)}
-              <span className="result-scale">/20</span>
+              {formatNumber(estimate.marks, 1)}
+              <span className="result-scale">/100</span>
             </p>
             <p className="result-interval">
               {formatNumber(estimate.interval[0], 1)} to{" "}
-              {formatNumber(estimate.interval[1], 1)} at the model's typical error
+              {formatNumber(estimate.interval[1], 1)} marks at the model's typical error
             </p>
           </div>
           <div className="result-badge">
+            <span className="tag">CBSE {estimate.grade_letter}</span>
             <BandBadge band={estimate.band} />
             <p className="result-model">
               {result.family} v{result.model_version}
@@ -259,8 +265,8 @@ function Result({ result }) {
 
         {estimate.distance_to_band_edge !== null ? (
           <p className="result-edge">
-            {formatNumber(estimate.distance_to_band_edge, 1)} grade points from the
-            nearest band boundary
+            {formatNumber(estimate.distance_to_band_edge, 1)} marks from the nearest band
+            boundary
             {estimate.distance_to_band_edge < context.test_rmse
               ? " - within the model's typical error, so the band is not a firm call."
               : "."}
@@ -270,7 +276,10 @@ function Result({ result }) {
         <div className="context-grid">
           <ContextItem label="Held-out RMSE" value={formatNumber(context.test_rmse, 2)} />
           <ContextItem label="Held-out MAE" value={formatNumber(context.test_mae, 2)} />
-          <ContextItem label="Within 2 marks" value={`${(context.within_2_marks * 100).toFixed(0)}%`} />
+          <ContextItem
+            label="Within 10 marks"
+            value={`${(context.within_10_marks * 100).toFixed(0)}%`}
+          />
           <ContextItem label="CV RMSE" value={formatNumber(context.cv_rmse, 2)} />
           <ContextItem label="Training rows" value={context.rows_train} />
           <ContextItem label="Test rows" value={context.rows_test} />
@@ -327,7 +336,7 @@ function Result({ result }) {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <p className="frame-footnote">{result.contribution_basis}</p>
+            <p className="frame-footnote">{result.contribution_basis}</p>
       </div>
 
       <div className="card limitations">

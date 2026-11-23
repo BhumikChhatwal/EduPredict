@@ -55,8 +55,9 @@ export default function App() {
                 : "checking API"}
           </p>
           <p className="foot-note">
-            Built for Indian secondary schools. Trained on 1,044 public Portuguese
-            records; estimates are statistical, not decisions.
+            Built for CBSE secondary schools. Trained on 1,044 public Portuguese records;
+            marks are mapped to the 0-100 scale, and estimates are statistical, not
+            decisions.
           </p>
         </footer>
       </aside>

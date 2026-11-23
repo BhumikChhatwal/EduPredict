@@ -21,6 +21,7 @@ import {
   PageHeader,
   formatNumber,
 } from "../components/ui";
+import { subjectLabel } from "../data/subjects";
 import { useApi } from "../hooks/useApi";
 import { api } from "../services/api";
 
@@ -28,11 +29,12 @@ const ACCENT = "#1f5aa6";
 const MUTED = "#8794a5";
 
 const BAND_ORDER = ["critical", "watch", "on_track", "strong"];
+// Band cuts are CBSE marks out of 100; the lowest starts at the board's 33% pass mark.
 const BAND_LABELS = {
-  critical: "Critical (< 10)",
-  watch: "Watch (10-13)",
-  on_track: "On track (14-16)",
-  strong: "Strong (17+)",
+  critical: "Critical (under 33)",
+  watch: "Watch (33-50)",
+  on_track: "On track (51-70)",
+  strong: "Strong (71+)",
 };
 
 export default function Dashboard() {
@@ -64,7 +66,7 @@ export default function Dashboard() {
       <PageHeader
         eyebrow="Overview"
         title="Student performance"
-        description="Two public datasets, four models, one honest error figure. Every number on this page is computed from the validated dataset and the saved training records."
+        description="A CBSE secondary-school view of one public dataset, four models, one honest error figure. Every number here is computed from the validated records and the saved training artifacts; grades are shown on the CBSE 0-100 marks scale."
         actions={
           <Link className="button" to="/predict">
             Estimate a grade
@@ -76,17 +78,17 @@ export default function Dashboard() {
         <MetricCard
           label="Students"
           value={data.students.total.toLocaleString()}
-          detail={`${data.students.mat} maths / ${data.students.por} Portuguese`}
+          detail={`${data.students.mat} Mathematics / ${data.students.por} Language`}
         />
         <MetricCard
-          label="Mean final grade"
+          label="Mean final marks"
           value={`${formatNumber(mat.mean)} / ${formatNumber(por.mean)}`}
-          detail="Maths / Portuguese, out of 20"
+          detail="Mathematics / Language, out of 100"
         />
         <MetricCard
           label="Below the pass mark"
           value={data.at_risk.total}
-          detail="Actual G3 under 10, both subjects"
+          detail="Actual marks under 33, both subjects"
         />
         <MetricCard
           label="Predictions logged"
@@ -98,8 +100,8 @@ export default function Dashboard() {
       <div className="grid grid-2">
         <ChartFrame
           title="Final grade distribution"
-          subtitle={`Counts per grade point - maths n=${data.students.mat}, Portuguese n=${data.students.por}`}
-          footnote="The two files are separate populations and are never pooled. Grades are discrete integers on a 0-20 scale; the pass mark is 10."
+          subtitle={`Students per 5-mark step - Mathematics n=${data.students.mat}, Language n=${data.students.por}`}
+          footnote="The two cohorts are separate populations and are never pooled. Marks are the dataset's native 0-20 grades multiplied by five, plotted in 5-mark steps; the CBSE pass mark is 33."
         >
           <div className="chart-height">
             <ResponsiveContainer width="100%" height="100%">
@@ -131,7 +133,7 @@ export default function Dashboard() {
         <ChartFrame
           title="Actual risk bands"
           subtitle={`Bands applied to the observed final grade of ${data.students.total} records`}
-          footnote="Bands are fixed product cut-offs, not learned thresholds and not an institutional standard."
+          footnote="Bands are fixed product cut-offs on CBSE marks, not learned thresholds and not a board standard."
         >
           <div className="band-chart">
             {BAND_ORDER.map((band) => (
@@ -179,13 +181,13 @@ export default function Dashboard() {
               key: "subject",
               label: "Subject",
               render: (row) =>
-                `${row.subject.toUpperCase()} / ${row.feature_set.replace("_", " ")}`,
+                `${subjectLabel(row.subject)} / ${row.feature_set.replace("_", " ")}`,
             },
             {
-              key: "predicted_g3",
-              label: "Estimate",
+              key: "predicted_marks",
+              label: "Marks",
               align: "right",
-              render: (row) => formatNumber(row.predicted_g3, 1),
+              render: (row) => formatNumber(row.predicted_marks, 1),
             },
             {
               key: "risk_band",

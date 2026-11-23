@@ -21,6 +21,7 @@ import {
   formatNumber,
   humanize,
 } from "../components/ui";
+import { SUBJECT_LABELS, subjectLabel } from "../data/subjects";
 import { useApi } from "../hooks/useApi";
 import { api } from "../services/api";
 
@@ -78,7 +79,7 @@ export default function Analytics() {
       <PageHeader
         eyebrow="Analytics"
         title="What the data and the models actually show"
-        description="Descriptive statistics from the validated dataset, plus the cross-validation and held-out records produced by the training pipeline."
+        description="Descriptive statistics from the validated dataset, plus the cross-validation and held-out records produced by the training pipeline. Grades are shown as CBSE marks out of 100; errors are in the same units."
       />
 
       <div className="grid grid-2">
@@ -103,7 +104,7 @@ export default function Analytics() {
           title="Permutation importance"
           subtitle={
             importance.data
-              ? `${subject.toUpperCase()} / ${featureSet.replace("_", " ")} - held-out rows n=${importance.data.n}`
+              ? `${subjectLabel(subject)} / ${featureSet.replace("_", " ")} - held-out rows n=${importance.data.n}`
               : "Held-out rows"
           }
           actions={
@@ -119,7 +120,7 @@ export default function Analytics() {
               </select>
             </div>
           }
-          footnote="Increase in RMSE when one feature is shuffled. It measures dependence, not causation, and is unstable when features are correlated."
+          footnote="Increase in RMSE, in CBSE marks, when one feature is shuffled. It measures dependence, not causation, and is unstable when features are correlated."
         >
           {importance.status === "loading" ? <Loading /> : null}
           {importance.status === "error" ? <ErrorNote error={importance.error} /> : null}
@@ -170,10 +171,10 @@ export default function Analytics() {
       </div>
 
       <ChartFrame
-        title="Mean final grade by attribute"
+        title="Mean final marks by attribute"
         subtitle={
           breakdown.data
-            ? `${humanize(attribute)} - maths n=${breakdown.data[0].n}, Portuguese n=${breakdown.data[1].n}`
+            ? `${humanize(attribute)} - Mathematics n=${breakdown.data[0].n}, Language n=${breakdown.data[1].n}`
             : "Group means"
         }
         actions={
@@ -208,7 +209,7 @@ export default function Analytics() {
                   axisLine={{ stroke: "#e2e5ea" }}
                 />
                 <YAxis
-                  domain={[0, 20]}
+                  domain={[0, 100]}
                   tick={{ fontSize: 11, fill: MUTED }}
                   tickLine={false}
                   axisLine={false}
@@ -221,8 +222,8 @@ export default function Analytics() {
                   }}
                 />
                 <Legend iconType="square" iconSize={8} wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="mat" name="Maths" fill={ACCENT} isAnimationActive={false} />
-                <Bar dataKey="por" name="Portuguese" fill={MUTED} isAnimationActive={false} />
+                <Bar dataKey="mat" name="Mathematics" fill={ACCENT} isAnimationActive={false} />
+                <Bar dataKey="por" name="Language" fill={MUTED} isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -231,8 +232,8 @@ export default function Analytics() {
 
       <ChartFrame
         title="Chosen model per subject and variant"
-        subtitle="5-fold CV on training rows, beside the single held-out evaluation"
-        footnote="Held-out scores were computed once, on the fixed 80/20 split, and are reported as recorded. They are not a second estimate."
+                  subtitle="5-fold CV on training rows, beside the single held-out evaluation, in CBSE marks"
+          footnote="Held-out scores were computed once, on the fixed 80/20 split, and are reported as recorded. They are not a second estimate. RMSE and MAE are multiplied by five from the dataset's 0-20 grade points."
       >
         {comparison.status === "loading" ? <Loading /> : null}
         {comparison.status === "error" ? <ErrorNote error={comparison.error} /> : null}
@@ -279,10 +280,10 @@ export default function Analytics() {
                 render: (row) => formatNumber(row.test_r2, 3),
               },
               {
-                key: "within_2_marks",
-                label: "Within 2",
+                key: "within_10_marks",
+                label: "Within 10",
                 align: "right",
-                render: (row) => `${(row.within_2_marks * 100).toFixed(0)}%`,
+                render: (row) => `${(row.within_10_marks * 100).toFixed(0)}%`,
               },
             ]}
           />
@@ -292,7 +293,7 @@ export default function Analytics() {
       <div className="grid grid-2">
         <ChartFrame
           title="Every candidate, compared"
-          subtitle="Same folds for every model, mean baseline as the floor"
+          subtitle="Same folds for every model, mean baseline as the floor, in CBSE marks"
           footnote={comparison.data?.selection_rule}
         >
           {comparison.data ? (
@@ -304,7 +305,7 @@ export default function Analytics() {
                   key: "subject",
                   label: "Set",
                   render: (row) =>
-                    `${row.subject.toUpperCase()} / ${row.feature_set.replace("_", " ")}`,
+                    `${subjectLabel(row.subject)} / ${row.feature_set.replace("_", " ")}`,
                 },
                 {
                   key: "name",
@@ -350,11 +351,11 @@ export default function Analytics() {
               rows={subjects.data.subjects}
               rowKey={(row) => row.subject}
               columns={[
-                { key: "subject", label: "Subject", render: (row) => row.subject.toUpperCase() },
+                { key: "subject", label: "Subject", render: (row) => subjectLabel(row.subject) },
                 { key: "rows", label: "Rows", align: "right" },
                 {
                   key: "mean",
-                  label: "Mean G3",
+                  label: "Mean marks",
                   align: "right",
                   render: (row) => formatNumber(row.mean, 2),
                 },
@@ -370,7 +371,7 @@ export default function Analytics() {
                   align: "right",
                   render: (row) => `${(row.pass_rate * 100).toFixed(1)}%`,
                 },
-                { key: "at_risk", label: "Below 10", align: "right" },
+                { key: "at_risk", label: "Below 33", align: "right" },
                 {
                   key: "mean_absences",
                   label: "Absences",
@@ -393,10 +394,7 @@ export default function Analytics() {
 function SubjectToggle({ subject, onChange }) {
   return (
     <div className="segmented" role="group" aria-label="Subject">
-      {[
-        ["mat", "Maths"],
-        ["por", "Portuguese"],
-      ].map(([value, label]) => (
+      {Object.entries(SUBJECT_LABELS).map(([value, label]) => (
         <button
           key={value}
           type="button"

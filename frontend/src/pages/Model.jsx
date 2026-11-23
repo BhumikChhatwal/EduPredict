@@ -8,6 +8,7 @@ import {
   formatNumber,
   humanize,
 } from "../components/ui";
+import { subjectLabel } from "../data/subjects";
 import { useApi } from "../hooks/useApi";
 import { api } from "../services/api";
 
@@ -33,7 +34,7 @@ export default function Model() {
       <PageHeader
         eyebrow="Model"
         title="What is actually deployed"
-        description="Four fitted pipelines, two per subject. This page reads the saved metadata: the chosen family, its parameters, the measured error, and how the estimates behave by band."
+        description="Four fitted pipelines, two per subject, reported in CBSE marks. This page reads the saved metadata: the chosen family, its parameters, the measured error, and how the estimates behave by band."
       />
 
       <div className="grid grid-model">
@@ -42,8 +43,7 @@ export default function Model() {
             <header className="model-summary-head">
               <div>
                 <p className="eyebrow">
-                  {model.subject === "mat" ? "Mathematics" : "Portuguese"} /{" "}
-                  {model.feature_set.replace("_", " ")}
+                  {subjectLabel(model.subject)} / {model.feature_set.replace("_", " ")}
                 </p>
                 <h2 className="frame-title">{model.family}</h2>
               </div>
@@ -55,8 +55,8 @@ export default function Model() {
               <Figure label="Test MAE" value={formatNumber(model.metrics.test_mae, 2)} />
               <Figure label="CV RMSE" value={formatNumber(model.metrics.cv_rmse, 2)} />
               <Figure
-                label="Within 2 marks"
-                value={`${(model.metrics.within_2_marks * 100).toFixed(0)}%`}
+                label="Within 10 marks"
+                value={`${(model.metrics.within_10_marks * 100).toFixed(0)}%`}
               />
             </div>
 
@@ -90,7 +90,9 @@ export default function Model() {
         <h2 className="frame-title">Chosen configuration</h2>
         <p className="frame-subtitle">
           The winner of the cross-validated comparison, refit on the full training split.
-          The dummy mean regressor is the floor every model had to beat.
+          The dummy mean regressor is the floor every model had to beat. Errors are in
+          CBSE marks; the artifacts store the dataset's 0-20 grade points and the API
+          multiplies by five.
         </p>
         <DataTable
           rows={models}
@@ -158,7 +160,7 @@ export default function Model() {
               >
                 {models.map((model) => (
                   <option key={keyOf(model)} value={keyOf(model)}>
-                    {model.subject.toUpperCase()} / {model.feature_set.replace("_", " ")}
+                    {subjectLabel(model.subject)} / {model.feature_set.replace("_", " ")}
                   </option>
                 ))}
               </select>
@@ -186,17 +188,18 @@ export default function Model() {
             ]}
           />
           <p className="frame-footnote">
-            Bias is predicted minus actual. The early models pull toward the middle: a
-            student who fails is estimated too high, a top student too low. Read a band
-            as a rough signal, and check its row count before trusting its error.
+            Bias is predicted minus actual, in CBSE marks. The early models pull toward
+            the middle: a student who fails is estimated too high, a top student too low.
+            Read a band as a rough signal, and check its row count before trusting its
+            error.
           </p>
         </section>
 
         <section className="card">
           <h2 className="frame-title">Top permutation importance</h2>
           <p className="frame-subtitle">
-            {active.subject.toUpperCase()} / {active.feature_set.replace("_", " ")} -
-            increase in RMSE when one input is shuffled.
+            {subjectLabel(active.subject)} / {active.feature_set.replace("_", " ")} -
+            increase in RMSE, in CBSE marks, when one input is shuffled.
           </p>
           <div className="importance-list">
             {active.feature_importance.map((row) => {
@@ -238,6 +241,12 @@ export default function Model() {
               </li>
             ))}
           </ul>
+          <p className="frame-subtitle">
+            CBSE scholastic grades (school-level absolute scale):{" "}
+            {data.grade_scale.grade_letters
+              .map((row) => `${row.label} ${letterRange(row)}`)
+              .join(", ")}
+          </p>
           <p className="frame-footnote">
             A band is a coarse triage signal. On the early models the estimate shrinks
             toward the middle, so the two extreme bands are the least reliable.
@@ -266,11 +275,12 @@ export default function Model() {
         </ul>
         <p className="frame-footnote">
           Artifact {active.model_version}, metadata schema {active.metadata_schema},
-          target {active.target} on a {active.target_range[0]}-{active.target_range[1]}{" "}
-          scale, {active.rows_train + active.rows_test} rows in this subject, seed{" "}
-          {active.split.seed}, last written{" "}
-          {formatDate(active.trained_at)}. Runtime: scikit-learn{" "}
-          {active.runtime.scikit_learn}, Python {active.runtime.python}.
+          target {active.target} modelled on the dataset's native{" "}
+          {active.target_range[0]}-{active.target_range[1]} scale and shown as{" "}
+          {active.target_range_marks[0]}-{active.target_range_marks[1]} CBSE marks,{" "}
+          {active.rows_train + active.rows_test} rows in this subject, seed{" "}
+          {active.split.seed}, last written {formatDate(active.trained_at)}. Runtime:
+          scikit-learn {active.runtime.scikit_learn}, Python {active.runtime.python}.
         </p>
       </section>
     </div>
@@ -292,6 +302,10 @@ function bandRange(band) {
   if (band.min === 0) return `under ${band.max}`;
   if (band.max_inclusive) return `${band.min} and above`;
   return `${band.min} to under ${band.max}`;
+}
+
+function letterRange(row) {
+  return row.below ? `${row.min}-${row.below - 1}` : `${row.min}+`;
 }
 
 function formatParams(params) {

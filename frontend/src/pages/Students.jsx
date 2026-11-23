@@ -8,6 +8,7 @@ import {
   PageHeader,
   formatNumber,
 } from "../components/ui";
+import { SUBJECT_LABELS, subjectLabel } from "../data/subjects";
 import { useApi } from "../hooks/useApi";
 import { api } from "../services/api";
 
@@ -62,7 +63,7 @@ export default function Students() {
       <PageHeader
         eyebrow="Records"
         title="Student records"
-        description="The public UCI rows, described by their actual final grade. IDs are generated row indices - the dataset contains no student identifiers."
+        description="The public UCI rows, described by their actual final marks on the CBSE 0-100 scale. IDs are generated row indices - the dataset contains no student identifiers."
       />
 
       <div className="card">
@@ -71,13 +72,16 @@ export default function Students() {
             <span className="control-label">Subject</span>
             <select value={subject} onChange={change(setSubject)}>
               <option value="">Both</option>
-              <option value="mat">Mathematics</option>
-              <option value="por">Portuguese</option>
+              {Object.entries(SUBJECT_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </select>
           </label>
 
-          <label className="control">
-            <span className="control-label">Actual band</span>
+                      <label className="control">
+              <span className="control-label">Actual band (marks)</span>
             <select value={band} onChange={change(setBand)}>
               {BANDS.map(([value, label]) => (
                 <option key={value} value={value}>
@@ -121,7 +125,7 @@ export default function Students() {
               empty="No records match these filters."
               columns={[
                 { key: "student_id", label: "ID" },
-                { key: "subject", label: "Subject", render: (row) => row.subject.toUpperCase() },
+                { key: "subject", label: "Subject", render: (row) => subjectLabel(row.subject) },
                 { key: "age", label: "Age", align: "right" },
                 { key: "sex", label: "Sex" },
                 { key: "studytime", label: "Study", align: "right" },

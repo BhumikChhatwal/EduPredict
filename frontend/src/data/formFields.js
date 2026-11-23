@@ -26,20 +26,10 @@ export const FIELD_GROUPS = [
   {
     title: "Academic history",
     description: "What the school already knows before the final period.",
+    // No school field: the CBSE product serves one board, so a GP/MS distinction would
+    // be a made-up input. The feature was dropped from the model and retrained without
+    // it rather than filled with a hidden default.
     fields: [
-      {
-        name: "school",
-        label: "School",
-        type: "select",
-        // The two schools the training data was collected from. They are dataset
-        // categories, not a school picker, so the help text says so plainly rather
-        // than implying the model knows an Indian school by name.
-        options: [
-          { value: "GP", label: "GP - Gabriel Pereira" },
-          { value: "MS", label: "MS - Mousinho da Silveira" },
-        ],
-        help: "The two Portuguese schools in the training data.",
-      },
       { name: "age", label: "Age", type: "number", min: 15, max: 22 },
       {
         name: "studytime",
@@ -215,7 +205,6 @@ export const GRADE_FIELDS = [
 ];
 
 export const DEFAULT_ATTRIBUTES = {
-  school: "GP",
   sex: "F",
   age: 17,
   address: "U",
