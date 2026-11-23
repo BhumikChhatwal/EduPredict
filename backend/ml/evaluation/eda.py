@@ -39,7 +39,7 @@ import matplotlib.pyplot as plt  # noqa: E402  (must follow the backend selectio
 import pandas as pd  # noqa: E402
 import seaborn as sns  # noqa: E402
 
-from ml import config  # noqa: E402
+from ml import cbse, config  # noqa: E402
 from ml.data import load  # noqa: E402
 
 FIGURES_DIR = config.REPORTS_DIR / "figures"
@@ -85,8 +85,9 @@ def summarise(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
 
     for subject, frame in frames.items():
         target = frame[config.TARGET]
+        # Band edges are CBSE marks, so the native 0-20 target is converted first.
         bands = pd.cut(
-            target,
+            target * cbse.MARKS_PER_POINT,
             bins=config.RISK_BAND_EDGES,
             labels=config.RISK_BAND_LABELS,
             right=False,
@@ -100,7 +101,9 @@ def summarise(frames: dict[str, pd.DataFrame]) -> dict[str, Any]:
             "g3_min": int(target.min()),
             "g3_max": int(target.max()),
             "grade_zero_rows": int((target == 0).sum()),
-            "pass_rate": round(float((target >= 10).mean()), 4),
+            "pass_rate": round(
+                float((target * cbse.MARKS_PER_POINT >= cbse.PASS_MARKS).mean()), 4
+            ),
             "bands": {label: int(bands.get(label, 0)) for label in config.RISK_BAND_LABELS},
             "correlation_with_g3": {
                 column: round(float(frame[column].corr(target)), 3)
@@ -229,14 +232,14 @@ def plot_risk_bands(summary: dict[str, Any]) -> str:
     axis.set_yticks(list(positions), [label.replace("_", " ") for label in labels])
     axis.invert_yaxis()
     axis.set_xlabel("Share of records (%)")
-    axis.set_title("Actual final grade by risk band")
+    axis.set_title("Actual final marks by risk band")
     axis.grid(axis="x", color=RULE, linewidth=0.8)
     axis.set_axisbelow(True)
     axis.legend(loc="lower right")
     fig.text(
         0.01,
         0.01,
-        "Bands are fixed product cut-offs on the observed grade, not a validated standard.",
+        "Bands are fixed cut-offs on marks (33 = CBSE pass), not a validated standard.",
         fontsize=8,
         color=MUTED,
     )
@@ -309,7 +312,7 @@ def format_findings(summary: dict[str, Any]) -> str:
             f"{SUBJECT_TITLES[subject]}  (n={values['rows']})",
             f"  G3 mean={values['g3_mean']:.2f}  median={values['g3_median']:.1f}  "
             f"sd={values['g3_std']:.2f}  range={values['g3_min']}-{values['g3_max']}",
-            f"  pass rate (G3 >= 10) = {values['pass_rate']:.1%}  "
+            f"  pass rate (CBSE marks >= 33) = {values['pass_rate']:.1%}  "
             f"G3 = 0 rows = {values['grade_zero_rows']}",
             f"  bands: {bands}",
             f"  correlation with G3: {correlations}",

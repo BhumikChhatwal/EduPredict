@@ -25,41 +25,41 @@
       "params": {
         "fit_intercept": true
       },
-      "rmse_mean": 1.299431043181762,
-      "rmse_std": 0.208027955884625,
-      "train_rmse": 1.1716716942071455
+      "rmse_mean": 1.301488168514257,
+      "rmse_std": 0.20528827986883408,
+      "train_rmse": 1.1735929970468744
     },
     {
       "params": {
         "fit_intercept": false
       },
-      "rmse_mean": 12.01468526154257,
-      "rmse_std": 0.14394123794895758,
-      "train_rmse": 11.99970824522634
+      "rmse_mean": 12.013119010224429,
+      "rmse_std": 0.14699212877439977,
+      "train_rmse": 11.99989186155806
     }
   ],
   "best_params": {
     "fit_intercept": true
   },
-  "best_train_rmse": 1.1716716942071455,
+  "best_train_rmse": 1.1735929970468744,
   "tuned_metrics": {
-    "rmse": 1.299431043181762,
-    "rmse_std": 0.208027955884625,
-    "mae": 0.8403725232012658,
-    "r2": 0.8280015520698634
+    "rmse": 1.301488168514257,
+    "rmse_std": 0.20528827986883408,
+    "mae": 0.841889882838904,
+    "r2": 0.8273494221298716
   },
   "untuned": {
     "model": "LinearRegression",
     "metrics": {
-      "rmse": 1.299431043181762,
-      "rmse_std": 0.208027955884625,
-      "mae": 0.8403725232012658,
-      "r2": 0.8280015520698634
+      "rmse": 1.301488168514257,
+      "rmse_std": 0.20528827986883408,
+      "mae": 0.841889882838904,
+      "r2": 0.8273494221298716
     }
   },
   "baseline_rmse": 3.1674899512065426,
   "chosen": "untuned",
   "chosen_params": {},
   "improvement_over_untuned": 0.0,
-  "improvement_over_baseline": 1.8680589080247807
+  "improvement_over_baseline": 1.8660017826922857
 }

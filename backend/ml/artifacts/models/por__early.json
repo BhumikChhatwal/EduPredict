@@ -1,7 +1,7 @@
 {
   "metadata_schema": 1,
-  "model_version": "1.0.0",
-  "trained_at": "2026-11-22T18:05:48+00:00",
+  "model_version": "2.0.0",
+  "trained_at": "2026-11-23T15:28:27+00:00",
   "runtime": {
     "python": "3.12.3",
     "scikit_learn": "1.9.1",
@@ -38,10 +38,9 @@
     "folds": 5
   },
   "features": {
-    "count": 36,
-    "encoded_count": 62,
+    "count": 35,
+    "encoded_count": 60,
     "names": [
-      "school",
       "sex",
       "age",
       "address",
@@ -80,58 +79,58 @@
     ]
   },
   "metrics": {
-    "cv_rmse": 2.553158366445905,
-    "cv_mae": 1.9236531385014715,
+    "cv_rmse": 2.5806457230248085,
+    "cv_mae": 1.9362933343293385,
     "baseline_cv_rmse": 3.1674899512065426,
-    "test_rmse": 3.2485081935705837,
-    "test_mae": 2.145759765031455,
-    "test_r2": 0.09484181174116924,
-    "test_mean_residual": 0.5696688571112993,
-    "within_2_marks": 0.6384615384615384,
-    "worst_error": 14.64552965178612,
+    "test_rmse": 3.2400787670504085,
+    "test_mae": 2.131815862197798,
+    "test_r2": 0.09953323601055608,
+    "test_mean_residual": 0.5368191209136195,
+    "within_2_marks": 0.6461538461538462,
+    "worst_error": 14.507298530641181,
     "clipped_predictions": 0
   },
   "bands": {
     "critical": {
-      "n": 20,
-      "mae": 5.185163323125115,
-      "rmse": 6.6678105846249585,
-      "mean_residual": 4.865220190098013,
-      "mean_actual": 6.35,
-      "mean_predicted": 11.215220190098012
+      "n": 5,
+      "mae": 11.68529371055289,
+      "rmse": 11.975641042238427,
+      "mean_residual": 11.68529371055289,
+      "mean_actual": 0.0,
+      "mean_predicted": 11.68529371055289
     },
     "watch": {
-      "n": 71,
-      "mae": 1.4032354953347923,
-      "rmse": 1.819726607234035,
-      "mean_residual": 0.6751121047155395,
-      "mean_actual": 11.366197183098592,
-      "mean_predicted": 12.041309287814132
+      "n": 36,
+      "mae": 2.6133559748618427,
+      "rmse": 3.0158654026905105,
+      "mean_residual": 1.932101434474851,
+      "mean_actual": 9.36111111111111,
+      "mean_predicted": 11.29321254558596
     },
     "on_track": {
-      "n": 30,
-      "mae": 1.4434236158835538,
-      "rmse": 2.016482508139692,
-      "mean_residual": -1.2955779155328218,
-      "mean_actual": 14.633333333333333,
-      "mean_predicted": 13.33775541780051
+      "n": 66,
+      "mae": 0.9532041204833985,
+      "rmse": 1.1813908190647155,
+      "mean_residual": 0.053358666832275026,
+      "mean_actual": 12.43939393939394,
+      "mean_predicted": 12.492752606226217
     },
     "strong": {
-      "n": 9,
-      "mae": 3.5903415940344416,
-      "rmse": 3.7353410104966795,
-      "mean_residual": -3.5903415940344416,
-      "mean_actual": 17.333333333333332,
-      "mean_predicted": 13.742991739298894
+      "n": 23,
+      "mae": 2.6833611515660296,
+      "rmse": 3.1493499127901536,
+      "mean_residual": -2.6833611515660296,
+      "mean_actual": 16.130434782608695,
+      "mean_predicted": 13.447073631042661
     }
   },
   "risk_bands": {
     "edges": [
       0,
-      10,
-      14,
-      17,
-      21
+      33,
+      51,
+      71,
+      101
     ],
     "labels": [
       "critical",
@@ -144,187 +143,181 @@
   "feature_importance": [
     {
       "feature": "higher",
-      "importance": 0.07510730060686903,
-      "std": 0.035983057254839516
+      "importance": 0.07303091706058566,
+      "std": 0.039371970447012586
     },
     {
       "feature": "failures",
-      "importance": 0.05911690882792682,
-      "std": 0.02988624431120229
+      "importance": 0.059711839487889586,
+      "std": 0.02097792726055349
     },
     {
       "feature": "failures_any",
-      "importance": 0.05081788950486512,
-      "std": 0.02693389995222442
+      "importance": 0.050057504653492305,
+      "std": 0.017338619875762715
     },
     {
       "feature": "studytime",
-      "importance": 0.030943544316085703,
-      "std": 0.02877857705917603
-    },
-    {
-      "feature": "alc_total",
-      "importance": 0.028929083814371294,
-      "std": 0.03805960621151706
+      "importance": 0.04922145511583409,
+      "std": 0.027437878071986343
     },
     {
       "feature": "schoolsup",
-      "importance": 0.02319206272214851,
-      "std": 0.012755199389512766
+      "importance": 0.025039349833812796,
+      "std": 0.01310488819116851
     },
     {
-      "feature": "activities",
-      "importance": 0.012140983666947136,
-      "std": 0.006257216781589187
-    },
-    {
-      "feature": "absences",
-      "importance": 0.012027887111165026,
-      "std": 0.0282320193340793
-    },
-    {
-      "feature": "romantic",
-      "importance": 0.010888865412964766,
-      "std": 0.004751731183332893
+      "feature": "alc_total",
+      "importance": 0.0183165226987577,
+      "std": 0.032745564122862385
     },
     {
       "feature": "address",
-      "importance": 0.010302612668391387,
-      "std": 0.010606803385376937
+      "importance": 0.01661317391584367,
+      "std": 0.013941860998446357
     },
     {
-      "feature": "school",
-      "importance": 0.010195718399154164,
-      "std": 0.02029773681229319
+      "feature": "absences",
+      "importance": 0.015606030765075652,
+      "std": 0.03388075183599982
+    },
+    {
+      "feature": "activities",
+      "importance": 0.013215929333148857,
+      "std": 0.007795755102779508
     },
     {
       "feature": "freetime",
-      "importance": 0.007534276302284493,
-      "std": 0.00882687366278991
+      "importance": 0.01287526450036136,
+      "std": 0.010314422750494856
     },
     {
       "feature": "sex",
-      "importance": 0.007319406993633137,
-      "std": 0.0068875404392866445
+      "importance": 0.012176053213033278,
+      "std": 0.00766668829531131
+    },
+    {
+      "feature": "romantic",
+      "importance": 0.010454636037321663,
+      "std": 0.004000138690525999
     },
     {
       "feature": "famrel",
-      "importance": 0.0052337494537035845,
-      "std": 0.01139274643342735
+      "importance": 0.006664610582928087,
+      "std": 0.01194248042038359
     },
     {
       "feature": "health",
-      "importance": 0.005169049318327712,
-      "std": 0.00407180141345187
+      "importance": 0.005849847801483765,
+      "std": 0.004191947965595386
     },
     {
       "feature": "internet",
-      "importance": 0.0030370341340307584,
-      "std": 0.004902468705867077
-    },
-    {
-      "feature": "Fedu",
-      "importance": 0.0018026931930612555,
-      "std": 0.006837601571990251
-    },
-    {
-      "feature": "Dalc",
-      "importance": 0.0013589370526720045,
-      "std": 0.0021315143469771433
-    },
-    {
-      "feature": "goout",
-      "importance": 0.0011731951180313338,
-      "std": 0.0034962524675963046
-    },
-    {
-      "feature": "support_total",
-      "importance": 0.0004094406017045138,
-      "std": 0.00823062656773268
+      "importance": 0.004937392120844564,
+      "std": 0.006622946757713534
     },
     {
       "feature": "reason",
-      "importance": 0.0003166249122076081,
-      "std": 0.01733778290775163
+      "importance": 0.004145372244512923,
+      "std": 0.021106982071114524
     },
     {
-      "feature": "nursery",
-      "importance": -7.856330415556556e-05,
-      "std": 0.0012518550923115226
+      "feature": "Dalc",
+      "importance": 0.001905046447869463,
+      "std": 0.002972439332593072
     },
     {
-      "feature": "Pstatus",
-      "importance": -0.00047255432022694774,
-      "std": 0.0006465349921149239
-    },
-    {
-      "feature": "paid",
-      "importance": -0.0005847150919222166,
-      "std": 0.0008539370509214396
-    },
-    {
-      "feature": "Fjob",
-      "importance": -0.001597181880235432,
-      "std": 0.006354674287515081
-    },
-    {
-      "feature": "traveltime",
-      "importance": -0.0017250832811734006,
-      "std": 0.0026441114004520793
-    },
-    {
-      "feature": "guardian",
-      "importance": -0.0025491607145086805,
-      "std": 0.002188672846790027
-    },
-    {
-      "feature": "famsup",
-      "importance": -0.003024111958489328,
-      "std": 0.005339796375666707
-    },
-    {
-      "feature": "famsize",
-      "importance": -0.00482890365154649,
-      "std": 0.004155530761856692
-    },
-    {
-      "feature": "parent_edu_gap",
-      "importance": -0.008125653399762367,
-      "std": 0.013224679044159653
+      "feature": "goout",
+      "importance": 0.0013627374103412748,
+      "std": 0.0021778369397402434
     },
     {
       "feature": "age",
-      "importance": -0.010459861905050261,
-      "std": 0.015000153152543801
+      "importance": 0.0009344662915835578,
+      "std": 0.017281310954142415
+    },
+    {
+      "feature": "Fjob",
+      "importance": 4.190355032394066e-05,
+      "std": 0.01086318719581094
+    },
+    {
+      "feature": "support_total",
+      "importance": -0.00010803442543236841,
+      "std": 0.009440804058738705
+    },
+    {
+      "feature": "paid",
+      "importance": -0.0005356568775763293,
+      "std": 0.0008330100843918511
+    },
+    {
+      "feature": "Pstatus",
+      "importance": -0.0007061174146095084,
+      "std": 0.00043212735909377314
+    },
+    {
+      "feature": "guardian",
+      "importance": -0.0007740548897469778,
+      "std": 0.001011683838748885
+    },
+    {
+      "feature": "nursery",
+      "importance": -0.001039726691320375,
+      "std": 0.001364368870804089
+    },
+    {
+      "feature": "Fedu",
+      "importance": -0.002637424259794674,
+      "std": 0.00636321176807348
+    },
+    {
+      "feature": "famsup",
+      "importance": -0.0036112550658559785,
+      "std": 0.004290325613072529
+    },
+    {
+      "feature": "traveltime",
+      "importance": -0.003712140703916944,
+      "std": 0.0032163943870066832
+    },
+    {
+      "feature": "famsize",
+      "importance": -0.007059175461543976,
+      "std": 0.005189796115108156
+    },
+    {
+      "feature": "parent_edu_gap",
+      "importance": -0.009700796628403997,
+      "std": 0.016593326791404364
     },
     {
       "feature": "Walc",
-      "importance": -0.014178248559062112,
-      "std": 0.007615997173382233
+      "importance": -0.010760487163881383,
+      "std": 0.013275211999626103
     },
     {
       "feature": "parent_edu_max",
-      "importance": -0.02477877363440193,
-      "std": 0.015180090566564329
-    },
-    {
-      "feature": "Mjob",
-      "importance": -0.02842422495988668,
-      "std": 0.016452134482125295
+      "importance": -0.01881770987755127,
+      "std": 0.013483939339049664
     },
     {
       "feature": "Medu",
-      "importance": -0.02917200303587828,
-      "std": 0.022096227355816067
+      "importance": -0.020286010431123193,
+      "std": 0.01624386162105046
+    },
+    {
+      "feature": "Mjob",
+      "importance": -0.033544425852987114,
+      "std": 0.016238841963899853
     },
     {
       "feature": "parent_edu_mean",
-      "importance": -0.037819504880429025,
-      "std": 0.03510427524989049
+      "importance": -0.03597806870672935,
+      "std": 0.036490835086219184
     }
   ],
   "reference_values": {
-    "school": "GP",
     "sex": "F",
     "age": 17.0,
     "address": "U",
@@ -362,5 +355,5 @@
     "failures_any": 0.0
   },
   "artifact": "por__early.joblib",
-  "artifact_bytes": 4829114
+  "artifact_bytes": 4814234
 }

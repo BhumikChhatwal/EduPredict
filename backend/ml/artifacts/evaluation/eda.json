@@ -7,12 +7,12 @@
     "g3_min": 0,
     "g3_max": 20,
     "grade_zero_rows": 38,
-    "pass_rate": 0.6709,
+    "pass_rate": 0.8456,
     "bands": {
-      "critical": 130,
-      "watch": 165,
-      "on_track": 76,
-      "strong": 24
+      "critical": 61,
+      "watch": 125,
+      "on_track": 136,
+      "strong": 73
     },
     "correlation_with_g3": {
       "G2": 0.905,
@@ -45,12 +45,12 @@
     "g3_min": 0,
     "g3_max": 19,
     "grade_zero_rows": 15,
-    "pass_rate": 0.8459,
+    "pass_rate": 0.9692,
     "bands": {
-      "critical": 100,
-      "watch": 355,
-      "on_track": 148,
-      "strong": 46
+      "critical": 20,
+      "watch": 177,
+      "on_track": 321,
+      "strong": 131
     },
     "correlation_with_g3": {
       "G2": 0.919,

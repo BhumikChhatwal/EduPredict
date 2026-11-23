@@ -54,7 +54,7 @@ from ml.training import compare, tune
 
 # Bumped when the artifact contract changes (a new field that consumers rely on, or a
 # different meaning for an existing one). The API reports it with every prediction.
-MODEL_VERSION = "1.0.0"
+MODEL_VERSION = "2.0.0"
 METADATA_SCHEMA = 1
 
 PERMUTATION_REPEATS = 5

@@ -23,7 +23,7 @@ from typing import Any
 
 import pandas as pd
 
-from ml import config
+from ml import cbse, config
 
 # Generated from the row position, because the dataset carries no student identifier.
 # It is an internal handle for joins and API calls, not an anonymised real identity.
@@ -156,9 +156,15 @@ def _check_categories(frame: pd.DataFrame, subject: str) -> None:
 
 
 def _grade_band_counts(frame: pd.DataFrame) -> dict[str, int]:
-    """Count target values per product risk band (cut-offs are policy, see config)."""
+    """Count target values per product risk band, on the CBSE marks scale.
+
+    The bands are cut-offs in marks (see `ml.risk`), so the native 0-20 grades are
+    converted first; reporting raw grades against mark boundaries would put every row
+    in the lowest band.
+    """
+    marks = frame[config.TARGET] * cbse.MARKS_PER_POINT
     bands = pd.cut(
-        frame[config.TARGET],
+        marks,
         bins=config.RISK_BAND_EDGES,
         labels=config.RISK_BAND_LABELS,
         right=False,

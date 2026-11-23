@@ -51,7 +51,7 @@ import matplotlib.pyplot as plt  # noqa: E402  (must follow the backend selectio
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from ml import config  # noqa: E402
+from ml import cbse, config  # noqa: E402
 from ml.data import load  # noqa: E402
 from ml.preprocessing import encoding, features, split  # noqa: E402
 from ml.training import compare, tune  # noqa: E402
@@ -70,9 +70,14 @@ WITHIN_MARKS = 2.0
 
 
 def risk_band_index(grades: np.ndarray) -> np.ndarray:
-    """Map grades onto the four risk bands (0-3) using the documented cut-offs."""
+    """Map native 0-20 grades onto the four risk bands (0-3).
+
+    Band edges are CBSE marks out of 100, so grades are converted before binning; the
+    returned labels are what the product reports.
+    """
     edges = np.asarray(config.RISK_BAND_EDGES[1:-1], dtype=float)
-    return np.digitize(np.asarray(grades, dtype=float), edges, right=False)
+    marks = np.asarray(grades, dtype=float) * cbse.MARKS_PER_POINT
+    return np.digitize(marks, edges, right=False)
 
 
 def clip_predictions(predicted: np.ndarray) -> tuple[np.ndarray, int]:
@@ -190,8 +195,13 @@ def _style_axes(ax: plt.Axes) -> None:
 
 
 def _band_rules(ax: plt.Axes, axis: str = "x") -> None:
-    """Draw the risk-band boundaries as faint rules, so band edges are visible."""
+    """Draw the risk-band boundaries as faint rules, so band edges are visible.
+
+    The plots stay on the dataset's native 0-20 axis, so mark boundaries are divided
+    back by five before drawing.
+    """
     for edge in config.RISK_BAND_EDGES[1:-1]:
+        edge = edge / cbse.MARKS_PER_POINT
         if axis == "x":
             ax.axvline(edge, color=RULE, linewidth=1.0, zorder=0)
         else:

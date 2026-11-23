@@ -34,7 +34,7 @@ import joblib
 import numpy as np
 import pandas as pd
 
-from ml import config, risk
+from ml import cbse, config, risk
 from ml.preprocessing import features
 
 DEFAULT_FEATURE_SET = features.FEATURE_SET_EARLY
@@ -229,13 +229,13 @@ LIMITATIONS = [
     "build is intended for Indian secondary schools, whose curriculum, assessment and "
     "student population differ, so the estimates are a planning aid there, not a "
     "validated local prediction.",
-    "The target is the Portuguese 0-20 course grade. Indian boards usually report marks "
-    "out of 100 or a grade letter, so an estimate has to be mapped to the local scale "
-    "before it means anything in a report card.",
+    "Marks out of 100 are the dataset's 0-20 course grades multiplied by five, and the "
+    "CBSE letter uses the school-level absolute grade table. The conversion puts the "
+    "estimate on a familiar scale; it does not make it a board measurement.",
     "Predictions use a single held-out error figure for every student. The measured "
     "error is much larger for students at the extremes of the grade scale.",
-    "Risk bands are product policy on the predicted grade, not a validated "
-    "institutional standard; a shift of about one RMSE can change the band.",
+    "Risk bands are product policy on predicted CBSE marks, not a board standard; a "
+    "shift of about one RMSE can change the band.",
     "Contributions are correlational marginal effects around one reference point. They "
     "are not causal, and they do not tell you what would happen if an attribute changed.",
     "Attendance is never predicted: absences is an input attribute, not a target.",
@@ -253,11 +253,20 @@ def predict(
 
     grade = _predict_frame(pipeline, frame, feature_set)
     metrics = metadata["metrics"]
-    lower, upper = config.NUMERIC_RANGES[config.TARGET]
     rmse = float(metrics["test_rmse"])
 
     contributions = explain(pipeline, metadata, frame, feature_set)
-    band = risk.band_label(grade)
+
+    # The artifact predicts the dataset's native 0-20 grade. The product speaks CBSE
+    # marks, so the estimate, its interval, its band and every contribution are all
+    # converted once, here.
+    contributions = [
+        {**row, "delta": cbse.to_marks(row["delta"], 1)} for row in contributions
+    ]
+    marks = cbse.to_marks(grade)
+    rmse_marks = cbse.to_marks(rmse, 2)
+    band = risk.band_label(marks)
+    edge = risk.distance_to_edge(marks)
 
     return {
         "subject": subject,
@@ -266,26 +275,26 @@ def predict(
         "model_version": metadata["model_version"],
         "prediction": {
             "grade": round(grade, 2),
+            "marks": marks,
+            "grade_letter": cbse.letter(marks),
             "band": band,
-            "interval": [round(max(lower, grade - rmse), 2),
-                         round(min(upper, grade + rmse), 2)],
+            "interval": [
+                round(max(0.0, marks - rmse_marks), 1),
+                round(min(cbse.MARKS_MAX, marks + rmse_marks), 1),
+            ],
             "interval_basis": (
-                f"estimate +/- the model's held-out RMSE ({rmse:.2f} grade points); "
+                f"estimate +/- the model's held-out RMSE ({rmse_marks:.1f} CBSE marks); "
                 "one average figure for every student, not a confidence interval"
             ),
-            "distance_to_band_edge": (
-                None
-                if risk.distance_to_edge(grade) is None
-                else round(float(risk.distance_to_edge(grade)), 2)
-            ),
+            "distance_to_band_edge": None if edge is None else round(float(edge), 1),
         },
         "context": {
-            "test_rmse": rmse,
-            "test_mae": float(metrics["test_mae"]),
+            "test_rmse": rmse_marks,
+            "test_mae": cbse.to_marks(metrics["test_mae"], 2),
             "test_r2": float(metrics["test_r2"]),
-            "cv_rmse": float(metrics["cv_rmse"]),
-            "baseline_cv_rmse": float(metrics["baseline_cv_rmse"]),
-            "within_2_marks": float(metrics["within_2_marks"]),
+            "cv_rmse": cbse.to_marks(metrics["cv_rmse"], 2),
+            "baseline_cv_rmse": cbse.to_marks(metrics["baseline_cv_rmse"], 2),
+            "within_10_marks": float(metrics["within_2_marks"]),
             "rows_train": int(metadata["rows_train"]),
             "rows_test": int(metadata["rows_test"]),
             "dataset_sha256": metadata["dataset_sha256"],

@@ -53,6 +53,14 @@ SUBJECT_FILES = {
 
 SUBJECTS = tuple(SUBJECT_FILES)
 
+# Display names for the CBSE product. `por` is the dataset's Portuguese-language cohort;
+# it is presented as the language subject rather than as English or Hindi, because
+# calling it either would claim a curriculum match the data does not have.
+SUBJECT_LABELS = {
+    "mat": "Mathematics",
+    "por": "Language",
+}
+
 # Rows the published dataset contains. A mismatch means the file is not the one this
 # project was designed and evaluated on.
 EXPECTED_ROW_COUNTS = {
@@ -242,16 +250,25 @@ CATEGORY_LEVELS = {
 #
 # The `early` set is the product default: at intake there are no period grades yet.
 # `with_grades` is reported beside it because G1/G2 predict G3 almost tautologically.
+#
+# `school` is a dataset column that the product deliberately does not ask for: a CBSE
+# deployment has no GP/MS distinction, and keeping a made-up value as a hidden input
+# would be worse than dropping it. The column stays in the raw file and in the loader's
+# schema check; it is only excluded from what the model sees.
 # --------------------------------------------------------------------------------------
+
+EXCLUDED_FEATURES = ("school",)
 
 EARLY_FEATURES = tuple(
     column
     for column in EXPECTED_COLUMNS
-    if column not in GRADE_COLUMNS
+    if column not in GRADE_COLUMNS and column not in EXCLUDED_FEATURES
 )
 
 WITH_GRADES_FEATURES = tuple(
-    column for column in EXPECTED_COLUMNS if column != TARGET
+    column
+    for column in EXPECTED_COLUMNS
+    if column != TARGET and column not in EXCLUDED_FEATURES
 )
 
 FEATURE_SETS = {
@@ -273,11 +290,15 @@ STRATIFICATION_EDGES = (0, 10, 14, 17, 21)
 # --------------------------------------------------------------------------------------
 # Risk bands
 #
-# Product policy, not something the model learns: fixed cut-offs on the predicted grade,
-# so the bands are explainable and identical for every subject. The API returns the
-# prediction, its error estimate and this band, so the UI can show how close a case sits
-# to a boundary rather than implying the band is a fact.
+# Product policy, not something the model learns: fixed cut-offs on predicted CBSE
+# marks, so the bands are explainable and identical for every subject. The lowest band
+# begins at CBSE's 33% pass mark; the remaining cuts are the product's triage levels.
+# The API returns the prediction, its error estimate and this band, so the UI can show
+# how close a case sits to a boundary rather than implying the band is a fact.
+#
+# Units are marks out of 100, while `STRATIFICATION_EDGES` above stays on the dataset's
+# native 0-20 scale: the saved split was built on that scale and is not rebuilt here.
 # --------------------------------------------------------------------------------------
 
-RISK_BAND_EDGES = (0, 10, 14, 17, 21)
+RISK_BAND_EDGES = (0, 33, 51, 71, 101)
 RISK_BAND_LABELS = ("critical", "watch", "on_track", "strong")

@@ -45,3 +45,4 @@ Thumbs.db
 # Local development logs
 backend-server.log
 frontend-server.log
+pipeline.log
