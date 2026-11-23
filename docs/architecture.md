@@ -330,10 +330,12 @@ client.
 `functools.lru_cache` on (subject, metric) is sufficient. No Redis, no pretence of
 scale.
 
-**Persistence:** `predictions(id, student_id NULL, subject, variant, model_version,
-payload_json, predicted_g3, risk_band, created_at)`. Anonymous submissions store
-`student_id = NULL`. Prediction history survives restarts, which is what makes
-"recent prediction activity" truthful rather than decorative.
+**Persistence:** `predictions(id, student_id NULL, subject, feature_set,
+model_version, family, predicted_g3, risk_band, payload_json, created_at)`.
+Anonymous submissions store `student_id = NULL`. Prediction history survives restarts,
+which is what makes "recent prediction activity" truthful rather than decorative.
+Historical student records are **not** copied into SQLite; they are served from the
+validated in-memory DataFrames (see §9.2).
 
 ### Anonymization
 
@@ -435,3 +437,71 @@ exactly one commit. Nothing is committed before it works.
 - `G1`/`G2`-included results are never presented without the `early` results beside
   them, and no accuracy claim appears in documentation unless it is copied from a
   real `metrics.json`.
+
+---
+
+## 9. Implementation notes and deviations
+
+Where the built system differs from the plan above, the difference is recorded here
+rather than silently absorbed. Everything else is implemented as written.
+
+### 9.1 EDA is a script, not a notebook
+
+§7 milestone 4 planned `notebooks/01_exploratory_analysis.ipynb`. It is implemented as
+`backend/ml/evaluation/eda.py` instead: a headless Matplotlib/Seaborn script that reads
+the validated DataFrames, writes five figures to `reports/figures/`, and writes
+`ml/artifacts/evaluation/eda.json` with the numbers the README quotes.
+
+Reason: the figures have to be regenerable by a command in the same way the training
+artifacts are, and a notebook diff is not reviewable. The script is the deliverable; the
+notebook directory is no longer part of the layout.
+
+### 9.2 Historical records are served from memory, not seeded into SQLite
+
+§2 and §5 describe a `student_records` table seeded by `scripts/seed_db.py`. There is
+no such table and no seed script. `app/core/dataset.py` validates both CSVs once at
+startup (through the same loader the pipeline uses) and serves records from those
+DataFrames; SQLite holds prediction history only.
+
+Reason: the dataset is 1,044 rows and never changes at runtime. Copying it into a
+second store would create two sources of truth for a page that claims to show "the
+validated dataset", with nothing to gain. Prediction history is genuinely new state, so
+it is the only thing persisted.
+
+Consequence: `GET /students` filters and pages in memory. At this size that is a
+non-issue; at a size where it is, the table becomes worth adding.
+
+### 9.3 Styling is three stylesheets, not CSS modules
+
+§2 planned `styles/tokens.css`, `global.css` and `*.module.css`. The implementation uses
+`tokens.css`, `global.css` and one `app.css`. Classes are plain, prefixed by component
+(`frame-`, `result-`, `band-`), and the design tokens are unchanged from §6.
+
+Reason: the app has roughly a dozen presentational components and one theme. A single
+readable stylesheet is easier to keep consistent than a dozen module files, and there is
+no naming collision to prevent.
+
+### 9.4 Milestones shipped in grouped commits
+
+§7 assigns one commit per milestone. Milestones 9–11 (API, analytics and persistence,
+tests) and 12–14 (frontend) were each developed and verified as a group before
+committing, because the tests for the API and the pages that consume it cannot be
+validated in isolation from each other. The commit prefixes and the "nothing is
+committed before it works" rule still hold.
+
+### 9.5 Artifact metadata is the single source for the Model page
+
+`GET /api/model/info` returns the metadata the serializer wrote, with `target` and
+`target_range` added. The interface renders that response; it does not hard-code model
+names, parameters, metrics or training dates. Retraining changes the page.
+
+`.joblib` files are intentionally untracked (`.gitignore`); the JSON metadata and
+evaluation records are committed because they are small and are quoted in the docs. A
+fresh clone therefore runs the pipeline once before starting the API, which fails fast
+with a clear message if artifacts are missing.
+
+### 9.6 All endpoints live under `/api`
+
+§5 lists paths without the prefix. `main.py` mounts every router with `prefix="/api"`,
+so `/api/health`, `/api/predict`, `/api/students` and the rest match the frontend's
+proxy and the documentation.
