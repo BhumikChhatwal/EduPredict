@@ -19,16 +19,22 @@ const NAV = [
 export default function App() {
   const health = useApi(() => api.health(), []);
 
+  const status =
+    health.status === "ready"
+      ? health.data.model_loaded
+        ? `${health.data.models} models loaded`
+        : "models unavailable"
+      : health.status === "error"
+        ? "API unreachable"
+        : "checking API";
+
   return (
     <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
+      <header className="topbar">
+        <NavLink to="/" className="brand">
           <span className="brand-mark" aria-hidden="true" />
-          <div>
-            <p className="brand-name">EduPredict</p>
-            <p className="brand-sub">Grade estimates with error bars</p>
-          </div>
-        </div>
+          <span className="brand-name">EduPredict</span>
+        </NavLink>
 
         <nav className="nav" aria-label="Sections">
           {NAV.map((item) => (
@@ -43,24 +49,11 @@ export default function App() {
           ))}
         </nav>
 
-        <footer className="sidebar-foot">
-          <p className="foot-line">
-            <span className={`dot ${health.data?.model_loaded ? "dot-ok" : "dot-warn"}`} />
-            {health.status === "ready"
-              ? health.data.model_loaded
-                ? `${health.data.models} models loaded`
-                : "models unavailable"
-              : health.status === "error"
-                ? "API unreachable"
-                : "checking API"}
-          </p>
-          <p className="foot-note">
-            Built for CBSE secondary schools. Trained on 1,044 public Portuguese records;
-            marks are mapped to the 0-100 scale, and estimates are statistical, not
-            decisions.
-          </p>
-        </footer>
-      </aside>
+        <p className="topbar-status">
+          <span className={`dot ${health.data?.model_loaded ? "dot-ok" : "dot-warn"}`} />
+          {status}
+        </p>
+      </header>
 
       <main className="main">
         <Routes>
@@ -72,6 +65,15 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
+
+      <footer className="site-foot">
+        <p>
+          Built for CBSE secondary schools. Trained on 1,044 public Portuguese records;
+          marks are mapped to the 0-100 scale, and every estimate is statistical, not a
+          decision.
+        </p>
+        <p className="site-foot-meta">Estimates with measured error</p>
+      </footer>
     </div>
   );
 }
@@ -79,11 +81,17 @@ export default function App() {
 function NotFound() {
   return (
     <div className="page">
-      <p className="eyebrow">404</p>
-      <h1 className="page-title">No such page</h1>
-      <p className="page-desc">
-        Use the navigation on the left: overview, prediction, records, analytics, model.
-      </p>
+      <header className="page-head">
+        <div>
+          <p className="eyebrow">404</p>
+          <h1 className="page-title">No such page</h1>
+        </div>
+        <div className="page-head-aside">
+          <p className="page-desc">
+            Use the navigation above: overview, prediction, records, analytics, model.
+          </p>
+        </div>
+      </header>
     </div>
   );
 }

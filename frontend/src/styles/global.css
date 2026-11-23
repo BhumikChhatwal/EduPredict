@@ -16,8 +16,34 @@ body {
   color: var(--text);
   font-family: var(--font-sans);
   font-size: var(--text-base);
-  line-height: 1.5;
+  line-height: 1.55;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* A single soft light source at the top of the page, echoing the reference hero's
+   black-to-steel gradient. Fixed so it does not stretch with long pages. */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 78vh;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    70% 62% at 50% -8%,
+    rgba(58, 92, 126, 0.55) 0%,
+    rgba(30, 46, 62, 0.28) 42%,
+    rgba(11, 11, 12, 0) 72%
+  );
+}
+
+#root {
+  position: relative;
+  z-index: 1;
 }
 
 h1,
@@ -27,13 +53,23 @@ p {
   margin: 0;
 }
 
+h2,
+h3 {
+  font-weight: 300;
+}
+
 a {
-  color: var(--accent);
+  color: var(--text);
   text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: #0b0b0c;
 }
 
 code {

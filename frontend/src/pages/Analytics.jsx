@@ -25,8 +25,8 @@ import { SUBJECT_LABELS, subjectLabel } from "../data/subjects";
 import { useApi } from "../hooks/useApi";
 import { api } from "../services/api";
 
-const ACCENT = "#1f5aa6";
-const MUTED = "#8794a5";
+const ACCENT = "#8fb6d9";
+const MUTED = "#6e737a";
 
 export default function Analytics() {
   const [subject, setSubject] = useState("mat");
@@ -142,7 +142,7 @@ export default function Analytics() {
                     type="category"
                     dataKey="feature"
                     width={116}
-                    tick={{ fontSize: 11, fill: "#101b2d" }}
+                    tick={{ fontSize: 11, fill: "#a6a6a1" }}
                     tickLine={false}
                     axisLine={false}
                     tickFormatter={humanize}
@@ -201,12 +201,12 @@ export default function Analytics() {
                 data={breakdownRows}
                 margin={{ top: 8, right: 8, bottom: 4, left: -18 }}
               >
-                <CartesianGrid stroke="#eef1f4" vertical={false} />
+                <CartesianGrid stroke="rgba(242, 242, 240, 0.07)" vertical={false} />
                 <XAxis
                   dataKey="value"
                   tick={{ fontSize: 11, fill: MUTED }}
                   tickLine={false}
-                  axisLine={{ stroke: "#e2e5ea" }}
+                  axisLine={{ stroke: "rgba(242, 242, 240, 0.18)" }}
                 />
                 <YAxis
                   domain={[0, 100]}
@@ -217,11 +217,11 @@ export default function Analytics() {
                 <Tooltip
                   contentStyle={tooltipStyle}
                   formatter={(value, name, entry) => {
-                    const count = name === "Maths" ? entry.payload.matN : entry.payload.porN;
+                    const count = name === "Mathematics" ? entry.payload.matN : entry.payload.porN;
                     return [`${formatNumber(value, 2)} (n=${count})`, name];
                   }}
                 />
-                <Legend iconType="square" iconSize={8} wrapperStyle={{ fontSize: 12 }} />
+                <Legend iconType="square" iconSize={8} wrapperStyle={{ fontSize: 12, color: "#a6a6a1" }} />
                 <Bar dataKey="mat" name="Mathematics" fill={ACCENT} isAnimationActive={false} />
                 <Bar dataKey="por" name="Language" fill={MUTED} isAnimationActive={false} />
               </BarChart>
@@ -410,7 +410,8 @@ function SubjectToggle({ subject, onChange }) {
 
 const tooltipStyle = {
   fontSize: 12,
-  border: "1px solid #e2e5ea",
-  borderRadius: 6,
-  boxShadow: "0 1px 2px rgba(16, 27, 45, 0.06)",
+  background: "#15161a",
+  border: "1px solid rgba(242, 242, 240, 0.18)",
+  borderRadius: 2,
+  color: "#f2f2f0",
 };

@@ -48,7 +48,7 @@ export default function CorrelationHeatmap({ labels, matrix }) {
           row.map((value, columnIndex) => {
             const magnitude = value === null ? 0 : Math.min(1, Math.abs(value));
             const fill = value === null
-              ? "#f1f3f6"
+              ? "rgba(242, 242, 240, 0.06)"
               : value >= 0
                 ? "var(--accent)"
                 : "var(--critical)";
@@ -61,7 +61,7 @@ export default function CorrelationHeatmap({ labels, matrix }) {
                 height={cell - 2}
                 rx={2}
                 fill={fill}
-                fillOpacity={value === null ? 1 : 0.06 + magnitude * 0.82}
+                fillOpacity={value === null ? 1 : 0.1 + magnitude * 0.78}
               >
                 <title>
                   {`${labels[rowIndex]} vs ${labels[columnIndex]}: ${
@@ -81,7 +81,7 @@ export default function CorrelationHeatmap({ labels, matrix }) {
                 x={pad + columnIndex * cell + (cell - 2) / 2}
                 y={pad + rowIndex * cell + cell / 2 + 2}
                 textAnchor="middle"
-                className={`heatmap-value ${Math.abs(value) > 0.55 ? "is-strong" : ""}`}
+                className={`heatmap-value ${Math.abs(value) > 0.45 ? "is-strong" : ""}`}
               >
                 {value.toFixed(2).replace("0.", ".")}
               </text>

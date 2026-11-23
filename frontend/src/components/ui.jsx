@@ -103,9 +103,13 @@ export function PageHeader({ eyebrow, title, description, actions }) {
       <div>
         <p className="eyebrow">{eyebrow}</p>
         <h1 className="page-title">{title}</h1>
-        {description ? <p className="page-desc">{description}</p> : null}
       </div>
-      {actions ? <div className="page-actions">{actions}</div> : null}
+      {description || actions ? (
+        <div className="page-head-aside">
+          {description ? <p className="page-desc">{description}</p> : null}
+          {actions ? <div className="page-actions">{actions}</div> : null}
+        </div>
+      ) : null}
     </header>
   );
 }

@@ -25,8 +25,8 @@ import { subjectLabel } from "../data/subjects";
 import { useApi } from "../hooks/useApi";
 import { api } from "../services/api";
 
-const ACCENT = "#1f5aa6";
-const MUTED = "#8794a5";
+const ACCENT = "#8fb6d9";
+const MUTED = "#6e737a";
 
 const BAND_ORDER = ["critical", "watch", "on_track", "strong"];
 // Band cuts are CBSE marks out of 100; the lowest starts at the board's 33% pass mark.
@@ -106,12 +106,12 @@ export default function Dashboard() {
           <div className="chart-height">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={histogram} margin={{ top: 8, right: 8, bottom: 4, left: -18 }}>
-                <CartesianGrid stroke="#eef1f4" vertical={false} />
+                <CartesianGrid stroke="rgba(242, 242, 240, 0.07)" vertical={false} />
                 <XAxis
                   dataKey="grade"
                   tick={{ fontSize: 11, fill: MUTED }}
                   tickLine={false}
-                  axisLine={{ stroke: "#e2e5ea" }}
+                  axisLine={{ stroke: "rgba(242, 242, 240, 0.18)" }}
                 />
                 <YAxis
                   tick={{ fontSize: 11, fill: MUTED }}
@@ -122,9 +122,9 @@ export default function Dashboard() {
                   contentStyle={tooltipStyle}
                   labelFormatter={(grade) => `Grade ${grade}`}
                 />
-                <Legend iconType="square" iconSize={8} wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="mat" name="Maths" fill={ACCENT} isAnimationActive={false} />
-                <Bar dataKey="por" name="Portuguese" fill={MUTED} isAnimationActive={false} />
+                <Legend iconType="square" iconSize={8} wrapperStyle={{ fontSize: 12, color: "#a6a6a1" }} />
+                <Bar dataKey="mat" name="Mathematics" fill={ACCENT} isAnimationActive={false} />
+                <Bar dataKey="por" name="Language" fill={MUTED} isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -210,7 +210,8 @@ export default function Dashboard() {
 
 const tooltipStyle = {
   fontSize: 12,
-  border: "1px solid #e2e5ea",
-  borderRadius: 6,
-  boxShadow: "0 1px 2px rgba(16, 27, 45, 0.06)",
+  background: "#15161a",
+  border: "1px solid rgba(242, 242, 240, 0.18)",
+  borderRadius: 2,
+  color: "#f2f2f0",
 };

@@ -20,8 +20,8 @@ import { DEFAULT_ATTRIBUTES, FIELD_GROUPS, GRADE_FIELDS } from "../data/formFiel
 import { SUBJECT_LABELS, subjectLabel } from "../data/subjects";
 import { api } from "../services/api";
 
-const ACCENT = "#1f5aa6";
-const MUTED = "#8794a5";
+const ACCENT = "#8fb6d9";
+const MUTED = "#6e737a";
 
 export default function Predict() {
   const [subject, setSubject] = useState("mat");
@@ -311,7 +311,7 @@ function Result({ result }) {
                 type="category"
                 dataKey="feature"
                 width={116}
-                tick={{ fontSize: 11, fill: "#101b2d" }}
+                tick={{ fontSize: 11, fill: "#a6a6a1" }}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={humanize}
@@ -324,7 +324,7 @@ function Result({ result }) {
                 labelFormatter={humanize}
                 contentStyle={tooltipStyle}
               />
-              <ReferenceLine x={0} stroke="#cdd3db" />
+              <ReferenceLine x={0} stroke="rgba(242, 242, 240, 0.3)" />
               <Bar dataKey="delta" isAnimationActive={false} barSize={13}>
                 {chartData.map((row) => (
                   <Cell
@@ -362,7 +362,8 @@ function ContextItem({ label, value }) {
 
 const tooltipStyle = {
   fontSize: 12,
-  border: "1px solid #e2e5ea",
-  borderRadius: 6,
-  boxShadow: "0 1px 2px rgba(16, 27, 45, 0.06)",
+  background: "#15161a",
+  border: "1px solid rgba(242, 242, 240, 0.18)",
+  borderRadius: 2,
+  color: "#f2f2f0",
 };
