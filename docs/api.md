@@ -27,11 +27,16 @@ answers "can this process serve a prediction right now".
 
 ### `GET /model/info`
 
-Defaults, the four models' metadata, the band policy and the limitations list. Each
-model carries `family`, `params`, `chosen` (`tuned` / `untuned`), `model_version`,
-`metadata_schema`, `target`, `target_range`, `trained_at`, `runtime`, `rows_train`,
-`rows_test`, `dataset_sha256`, `split`, `features` (counts and names), `metrics`,
-`bands` (held-out error per predicted band) and the top ten `feature_importance` rows.
+Defaults, the four models' metadata, the CBSE grade scale, the band policy and the
+limitations list. Each model carries `family`, `params`, `chosen` (`tuned` /
+`untuned`), `model_version`, `metadata_schema`, `target`, `target_range`,
+`target_range_marks`, `trained_at`, `runtime`, `rows_train`, `rows_test`,
+`dataset_sha256`, `split`, `features` (counts and names), `metrics` (in CBSE marks),
+`bands` (held-out error per actual band) and the top ten `feature_importance` rows.
+
+`grade_scale` states the conversion (`marks = native grade × 5`), the pass mark (33)
+and the absolute A1–E letter table. `subject_labels` maps `mat` to Mathematics and
+`por` to Language.
 
 ### `GET /model/artifact/{subject}/{feature_set}`
 
@@ -52,7 +57,7 @@ Request:
   "feature_set": "early",
   "student_id": "MAT-0001",
   "attributes": {
-    "school": "GP", "sex": "F", "age": 17, "address": "U", "famsize": "GT3",
+    "sex": "F", "age": 17, "address": "U", "famsize": "GT3",
     "Pstatus": "T", "Medu": 4, "Fedu": 4, "Mjob": "at_home", "Fjob": "teacher",
     "reason": "course", "guardian": "mother", "traveltime": 1, "studytime": 2,
     "failures": 0, "schoolsup": "yes", "famsup": "no", "paid": "no",
@@ -69,6 +74,10 @@ and are required for `with_grades`; both are enforced by the inference layer, no
 by Pydantic, because sending grades with `early` would silently change the model's
 meaning.
 
+There is **no `school` field**: the CBSE product dropped it, the models were retrained
+without it (v2.0.0), and a request containing `school` is rejected with 422 rather than
+ignored.
+
 Response (abridged):
 
 ```json
@@ -77,14 +86,17 @@ Response (abridged):
   "subject": "mat", "feature_set": "early",
   "family": "RandomForest", "model_version": "1.0.0",
   "prediction": {
-    "grade": 11.0, "band": "watch",
-    "interval": [6.9, 15.1],
-    "interval_basis": "estimate +/- the model's held-out RMSE (4.09 grade points); one average figure for every student, not a confidence interval",
-    "distance_to_band_edge": 1.0
+    "grade": 10.96,
+    "marks": 54.8,
+    "grade_letter": "C1",
+    "band": "on_track",
+    "interval": [34.4, 75.2],
+    "interval_basis": "estimate +/- the model's held-out RMSE (20.4 CBSE marks); one average figure for every student, not a confidence interval",
+    "distance_to_band_edge": 3.8
   },
   "context": {
-    "test_rmse": 4.086, "test_mae": 3.143, "test_r2": 0.196, "cv_rmse": 3.856,
-    "baseline_cv_rmse": 4.590, "within_2_marks": 0.443,
+    "test_rmse": 20.42, "test_mae": 15.7, "test_r2": 0.197, "cv_rmse": 19.27,
+    "baseline_cv_rmse": 22.95, "within_10_marks": 0.443,
     "rows_train": 316, "rows_test": 79, "dataset_sha256": "..."
   },
   "contributions": [
@@ -96,10 +108,14 @@ Response (abridged):
 ```
 
 The estimate is stored only after inference succeeds, so a rejected request never
-leaves a row claiming a model answered it. `grade` is rounded to one decimal for
-display; `interval` is the estimate ± one held-out RMSE, the same width for every
-student, which is a documented simplification (the measured error is larger at the
-extremes).
+leaves a row claiming a model answered it.
+
+Units: `grade` is the dataset's native 0–20 value, kept so the artifact's own scale
+stays visible. `marks` is `grade × 5`, `grade_letter` is CBSE's absolute school-level
+grade, and `interval`, `distance_to_band_edge`, `contributions[].delta` and every
+`context` error figure are in CBSE marks. `interval` is the estimate ± one held-out
+RMSE — the same width for every student, a documented simplification (the measured
+error is larger at the extremes).
 
 ### `GET /predictions/recent?limit=10`
 
@@ -136,8 +152,9 @@ Returns `{items, page, page_size, total, pages}`; total is 1044 unfiltered.
 
 ### `GET /students/{id}`
 
-One record's full attributes, its actual band, and the note that the ID is a generated
-row index rather than a pseudonym.
+One record's full attributes with `G1`, `G2` and `G3` in CBSE marks, its actual band,
+and the note that the ID is a generated row index rather than a pseudonym. The raw
+`school` column is not exposed.
 
 ### `GET /students/{id}/predictions`
 

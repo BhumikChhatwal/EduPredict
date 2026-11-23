@@ -247,6 +247,10 @@ defensible payoff).
 **Tuning** — `GridSearchCV` (5-fold, same seed) on the selected family only, with
 small grids. Tuning all four families on 300 rows mostly tunes noise.
 
+**Features (v2).** The dataset's `school` column is excluded from both variants: the
+product is CBSE-facing and has no use for a GP/MS split, so it was dropped and the
+models retrained rather than given a hidden constant. See §9.8.
+
 **Selection** — lowest CV RMSE, tie-broken by MAE and CV std. RMSE because it is in
 grade points and penalises the large errors that matter near the pass threshold. R²
 is reported for interpretability, not used for selection.
@@ -256,14 +260,15 @@ produced by a real run. Mediocre numbers are reported as-is, with reasoning.
 
 ### 4.4 Risk banding
 
-Derived from the predicted grade on the 0–20 scale (pass mark 10):
+Derived from the predicted **CBSE marks** (0–100, pass mark 33). The model still learns
+the dataset's native 0–20 grade; `ml/cbse.py` converts once, at the edge (§9.7).
 
-| Band | Predicted G3 | Meaning |
+| Band | Predicted marks | Meaning |
 |---|---|---|
-| `critical` | < 10 | Below the pass threshold |
-| `watch` | 10 – 13 | Passing but marginal |
-| `on_track` | 14 – 16 | Comfortable |
-| `strong` | ≥ 17 | High |
+| `critical` | < 33 | Below the CBSE pass mark |
+| `watch` | 33 – 50 | Passing but marginal |
+| `on_track` | 51 – 70 | Comfortable |
+| `strong` | ≥ 71 | High |
 
 The interface states, in place, that these thresholds are **product policy**, not
 learned from data and not validated against an institutional standard, and that a
@@ -511,3 +516,39 @@ with a clear message if artifacts are missing.
 §5 lists paths without the prefix. `main.py` mounts every router with `prefix="/api"`,
 so `/api/health`, `/api/predict`, `/api/students` and the rest match the frontend's
 proxy and the documentation.
+
+### 9.7 The product reports CBSE marks; the model does not learn them
+
+The models predict the dataset's native 0–20 grade, exactly as §4 describes. The
+interface, the bands, the letters and every error figure are on the CBSE 0–100 scale.
+
+- `ml/cbse.py` holds the conversion (`marks = grade × 5`), the 33 pass mark and the
+  absolute A1–E table, with the CBSE references in its docstring.
+- `ml/risk.py` cuts bands on marks (0/33/51/71/101). `STRATIFICATION_EDGES` stays on the
+  native scale, because the saved split was built on it and is not rebuilt.
+- The API converts at its boundary: prediction marks, interval, contributions, context
+  errors, analytics means, student grades and model metadata are all in marks. The
+  artifacts keep native values, so nothing is rewritten after the fact.
+- `within_2_marks` in an artifact becomes `within_10_marks` in the API: the tolerance
+  is ten CBSE marks, the same two native points.
+
+Why this shape: retraining the model to regress marks directly would be a new study
+with its own evaluation, and would not make the estimates any more CBSE-calibrated. A
+single, documented, linear conversion is honest about what changed (units) and what did
+not (evidence).
+
+### 9.8 `school` is not an input, and the models were retrained
+
+The dataset separates two Portuguese schools. A CBSE product has no such distinction,
+so `config.EXCLUDED_FEATURES = ("school",)` removes it from both feature sets; the raw
+column stays in the file and in the loader's schema check, and `/students/{id}` does not
+expose it.
+
+This is a modelling change, not a UI one: all four artifacts were re-fitted as version
+`2.0.0` and re-evaluated on the same saved rows. The feature carried little signal
+(scores moved by ~0.01–0.03 native points), which is why dropping it cost nothing
+measurable. Filling it with a constant instead would have made the model silently
+pretend every student attended the same school.
+
+Subjects are presented as **Mathematics** and **Language** (`config.SUBJECT_LABELS`):
+the second cohort is a Portuguese-language course, not an English or Hindi paper.
