@@ -23,9 +23,11 @@ def record() -> dict:
 
 
 def test_risk_band_index_uses_documented_cut_offs() -> None:
-    grades = np.array([0.0, 9.99, 10.0, 13.99, 14.0, 16.99, 17.0, 20.0])
+    # Band edges are CBSE marks (33 / 51 / 71), so the native grades are their fifths.
+    grades = np.array([0.0, 6.59, 6.6, 10.19, 10.2, 14.19, 14.2, 20.0])
     assert evaluation.risk_band_index(grades).tolist() == [0, 0, 1, 1, 2, 2, 3, 3]
     assert len(config.RISK_BAND_LABELS) == 4
+    assert list(config.RISK_BAND_EDGES) == [0, 33, 51, 71, 101]
 
 
 def test_clipping_only_touches_out_of_range_predictions() -> None:
@@ -37,15 +39,16 @@ def test_clipping_only_touches_out_of_range_predictions() -> None:
 
 
 def test_band_table_reports_the_sign_of_the_bias() -> None:
-    actual = np.array([8.0, 8.0, 15.0, 15.0])
-    predicted = np.array([10.0, 10.0, 13.0, 13.0])
+    # Native 5 and 15 are 25 and 75 CBSE marks: critical and strong respectively.
+    actual = np.array([5.0, 5.0, 15.0, 15.0])
+    predicted = np.array([6.0, 6.0, 14.0, 14.0])
     table = evaluation.band_table(actual, predicted)
 
     assert table["critical"]["n"] == 2
-    assert table["critical"]["mean_residual"] == pytest.approx(2.0)  # over-predicted
-    assert table["on_track"]["mean_residual"] == pytest.approx(-2.0)  # under-predicted
-    assert table["critical"]["mae"] == pytest.approx(2.0)
-    assert table["critical"]["rmse"] == pytest.approx(2.0)
+    assert table["critical"]["mean_residual"] == pytest.approx(1.0)  # over-predicted
+    assert table["strong"]["mean_residual"] == pytest.approx(-1.0)  # under-predicted
+    assert table["critical"]["mae"] == pytest.approx(1.0)
+    assert table["critical"]["rmse"] == pytest.approx(1.0)
 
 
 def test_band_table_keeps_an_empty_band_visible() -> None:

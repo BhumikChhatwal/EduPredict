@@ -13,12 +13,11 @@ import json
 import numpy as np
 import pytest
 
-from ml import config, risk
+from ml import cbse, config, risk
 from ml.inference import predict as inference
 from ml.preprocessing import features
 
 EARLY_EXAMPLE = {
-    "school": "GP",
     "sex": "F",
     "age": 17,
     "address": "U",
@@ -89,9 +88,13 @@ def test_prediction_is_a_grade_on_the_documented_scale(early_result: dict) -> No
     low, high = config.NUMERIC_RANGES[config.TARGET]
 
     assert low <= grade <= high
-    assert early_result["prediction"]["band"] == risk.band_label(grade)
+    assert early_result["prediction"]["marks"] == cbse.to_marks(grade)
+    assert early_result["prediction"]["grade_letter"] == cbse.letter(cbse.to_marks(grade))
+    assert early_result["prediction"]["band"] == risk.band_label(cbse.to_marks(grade))
+    # The interval is reported on the CBSE marks scale, like every other product figure.
     lower, upper = early_result["prediction"]["interval"]
-    assert lower <= grade <= upper
+    marks = early_result["prediction"]["marks"]
+    assert 0 <= lower <= marks <= upper <= 100
     assert early_result["feature_set"] == features.FEATURE_SET_EARLY
 
 
@@ -117,10 +120,11 @@ def test_contributions_are_signed_and_reproducible(early_result: dict) -> None:
     matrix = features.feature_matrix(frame, features.FEATURE_SET_EARLY)
     ablated = matrix.copy()
     ablated[largest["feature"]] = metadata["reference_values"][largest["feature"]]
-    ablated_grade = float(pipeline.predict(ablated)[0])
+    ablated_marks = cbse.to_marks(float(pipeline.predict(ablated)[0]), 1)
 
-    assert ablated_grade == pytest.approx(
-        early_result["prediction"]["grade"] - largest["delta"], abs=0.01
+    # Contributions are reported in CBSE marks, so the check is on that scale too.
+    assert ablated_marks == pytest.approx(
+        early_result["prediction"]["marks"] - largest["delta"], abs=0.3
     )
 
 
@@ -144,7 +148,7 @@ def test_out_of_domain_values_are_rejected() -> None:
         inference.predict("mat", dict(EARLY_EXAMPLE, age=40))
 
     with pytest.raises(inference.AttributeValidationError):
-        inference.predict("mat", dict(EARLY_EXAMPLE, school="XX"))
+        inference.predict("mat", dict(EARLY_EXAMPLE, Medu=9))
 
     with pytest.raises(inference.AttributeValidationError):
         inference.predict("mat", dict(EARLY_EXAMPLE, studytime="lots"))
@@ -158,16 +162,26 @@ def test_unexpected_attributes_are_rejected_not_ignored() -> None:
 
 
 def test_risk_band_boundaries_are_left_closed() -> None:
-    assert risk.band_label(9.99) == "critical"
-    assert risk.band_label(10.0) == "watch"
-    assert risk.band_label(13.99) == "watch"
-    assert risk.band_label(14.0) == "on_track"
-    assert risk.band_label(17.0) == "strong"
+    # Bands are cut on CBSE marks; 33 is the board's pass mark.
+    assert risk.band_label(32.99) == "critical"
+    assert risk.band_label(33.0) == "watch"
+    assert risk.band_label(50.99) == "watch"
+    assert risk.band_label(51.0) == "on_track"
+    assert risk.band_label(71.0) == "strong"
 
-    assert risk.distance_to_edge(13.9) == pytest.approx(0.1)
+    assert risk.distance_to_edge(50.9) == pytest.approx(0.1)
     ranges = risk.band_ranges()
     assert ranges[0]["min"] == 0.0
-    assert ranges[-1]["max"] == 21.0 and ranges[-1]["max_inclusive"] is True
+    assert ranges[0]["max"] == 33.0
+    assert ranges[-1]["max"] == 101.0 and ranges[-1]["max_inclusive"] is True
+
+
+def test_school_is_not_an_accepted_input() -> None:
+    """The CBSE product has no school field; sending one must fail, not be ignored."""
+    with pytest.raises(inference.AttributeValidationError) as error:
+        inference.predict("mat", dict(EARLY_EXAMPLE, school="GP"))
+
+    assert "school" in str(error.value)
 
 
 def test_a_missing_artifact_raises_a_clear_error(tmp_path, monkeypatch) -> None:

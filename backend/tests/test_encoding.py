@@ -44,7 +44,11 @@ def test_expected_group_sizes() -> None:
         features.feature_columns(features.FEATURE_SET_EARLY)
     )
 
-    assert len(groups["nominal"]) == len(config.NOMINAL_COLUMNS) == 17
+    # `school` is a dataset column the CBSE product does not ask for, so it is not a
+    # feature; the rest of the nominal and ordinal groups are unchanged.
+    excluded_nominal = [c for c in config.NOMINAL_COLUMNS if c in config.EXCLUDED_FEATURES]
+    assert len(groups["nominal"]) == len(config.NOMINAL_COLUMNS) - len(excluded_nominal)
+    assert "school" not in groups["nominal"]
     assert len(groups["ordinal"]) == len(config.ORDINAL_COLUMNS) == 10
     assert len(groups["numeric"]) == 9
 
@@ -67,7 +71,9 @@ def test_feature_matrix_excludes_target_and_id(maths: pd.DataFrame) -> None:
 def test_encoded_matrix_is_dense_and_nan_free(maths: pd.DataFrame) -> None:
     report = encoding.describe(maths, features.FEATURE_SET_EARLY)
 
-    assert report["input_features"] == 36
+    assert report["input_features"] == len(
+        features.feature_columns(features.FEATURE_SET_EARLY)
+    )
     assert report["encoded_features"] > report["input_features"]
     assert len(report["feature_names"]) == report["encoded_features"]
 

@@ -15,7 +15,6 @@ import pytest
 from fastapi.testclient import TestClient
 
 EARLY_EXAMPLE = {
-    "school": "GP",
     "sex": "F",
     "age": 17,
     "address": "U",
@@ -67,7 +66,7 @@ def test_health_reports_a_loaded_model(client: TestClient) -> None:
     assert body["status"] == "ok"
     assert body["model_loaded"] is True
     assert body["models"] == 4
-    assert body["model_version"] == "1.0.0"
+    assert body["model_version"] == "2.0.0"
 
 
 def test_model_info_lists_all_four_models_with_their_metrics(client: TestClient) -> None:
@@ -123,10 +122,19 @@ def test_prediction_returns_an_estimate_band_and_explanations(client: TestClient
     body = response.json()
 
     assert 0 <= body["prediction"]["grade"] <= 20
+    assert 0 <= body["prediction"]["marks"] <= 100
+    assert body["prediction"]["marks"] == pytest.approx(
+        body["prediction"]["grade"] * 5, abs=0.1
+    )
+    assert body["prediction"]["grade_letter"] in {
+        "A1", "A2", "B1", "B2", "C1", "C2", "D", "E"
+    }
     assert body["prediction"]["band"] in {"critical", "watch", "on_track", "strong"}
-    assert body["prediction"]["interval"][0] <= body["prediction"]["grade"]
+    assert body["prediction"]["interval"][0] <= body["prediction"]["marks"]
+    assert body["prediction"]["interval"][1] >= body["prediction"]["marks"]
     assert len(body["contributions"]) > 0
-    assert body["context"]["test_rmse"] == pytest.approx(4.086223125303643)
+    # Context is reported in CBSE marks: the artifact's 4.086 native points x 5.
+    assert body["context"]["test_rmse"] == pytest.approx(20.43, abs=0.01)
     assert body["limitations"]
     assert isinstance(body["id"], int)
 
@@ -194,6 +202,27 @@ def test_with_grades_prediction_is_served(client: TestClient) -> None:
     assert response.status_code == 200
     assert response.json()["feature_set"] == "with_grades"
     assert response.json()["family"] == "LinearRegression"
+
+
+def test_school_is_rejected_and_the_cbse_scale_is_published(
+    client: TestClient,
+) -> None:
+    """The CBSE contract: no school input, and the marks scale is part of the metadata."""
+    with_school = client.post(
+        "/api/predict",
+        json={
+            "subject": "mat",
+            "feature_set": "early",
+            "attributes": dict(EARLY_EXAMPLE, school="GP"),
+        },
+    )
+    assert with_school.status_code == 422
+
+    scale = client.get("/api/model/info").json()["grade_scale"]
+    assert scale["marks_max"] == 100
+    assert scale["native_max"] == 20
+    assert scale["pass_marks"] == 33
+    assert [row["label"] for row in scale["grade_letters"]][:3] == ["A1", "A2", "B1"]
 
 
 def test_out_of_domain_and_unknown_fields_are_rejected(client: TestClient) -> None:
@@ -317,7 +346,10 @@ def test_student_detail_and_missing_record(client: TestClient) -> None:
 
     assert body["student_id"] == "POR-0142"
     assert body["subject"] == "por"
-    assert set(body["attributes"]) >= {"school", "age", "absences", "G3"}
+    assert set(body["attributes"]) >= {"age", "absences", "G3", "sex"}
+    # The CBSE product has no school field, so the raw GP/MS column is not shown either.
+    assert "school" not in body["attributes"]
+    assert body["attributes"]["G3"] % 5 == 0
     assert body["band"] in {"critical", "watch", "on_track", "strong"}
 
     assert client.get("/api/students/MAT-9999").status_code == 404
