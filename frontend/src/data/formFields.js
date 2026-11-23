@@ -31,10 +31,14 @@ export const FIELD_GROUPS = [
         name: "school",
         label: "School",
         type: "select",
+        // The two schools the training data was collected from. They are dataset
+        // categories, not a school picker, so the help text says so plainly rather
+        // than implying the model knows an Indian school by name.
         options: [
           { value: "GP", label: "GP - Gabriel Pereira" },
           { value: "MS", label: "MS - Mousinho da Silveira" },
         ],
+        help: "The two Portuguese schools in the training data.",
       },
       { name: "age", label: "Age", type: "number", min: 15, max: 22 },
       {

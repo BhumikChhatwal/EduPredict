@@ -29,6 +29,12 @@ that dataset drive the design:
 Predictions are estimates. They are not guaranteed outcomes and not judgements
 about any student.
 
+The intended deployment context is **Indian secondary schools**, while the only
+available data is Portuguese. That mismatch is treated as a first-class constraint, not
+a footnote: it appears in the model card, in the limitations block returned with every
+prediction, and in the interface copy. Nothing in the product claims the model is
+calibrated for Indian students, and no Indian data was used to fit or validate it.
+
 ---
 
 ## 2. System architecture

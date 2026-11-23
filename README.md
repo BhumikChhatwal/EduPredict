@@ -8,6 +8,11 @@ which attributes influenced each estimate.
 
 > Predictions are statistical estimates produced from a small public dataset. They
 > are not guaranteed outcomes and not judgements about any student.
+>
+> The product is intended for Indian secondary schools. The only training data is
+> public and Portuguese (two schools, 2005–2006), so the estimates are an early-warning
+> aid there, not a validated local prediction; see the domain gap in
+> [docs/model_card.md](docs/model_card.md#5-intended-use-and-non-use).
 
 ## Status
 
@@ -140,11 +145,14 @@ generated row indices, not anonymized real identities.
 
 ## Known limitations
 
-The short version: the data is small, local and dated; the early models regress
-toward the middle of the scale, over-estimating students who go on to fail and
+The short version: the training data is Portuguese, the product is aimed at Indian
+schools, and that gap is unmeasured — no Indian records were used to fit or validate
+anything. On top of that, the data is small and dated (2005–2006); the early models
+regress toward the middle of the scale, over-estimating students who go on to fail and
 under-estimating top students; the reported error is an average, not a per-student
-figure; the risk bands are product policy, not an institutional standard; attendance
-is never predicted (`absences` is an input); and no result is causal.
+figure; the target is the Portuguese 0–20 grade, not marks out of 100; the risk bands
+are product policy, not an institutional standard; attendance is never predicted
+(`absences` is an input); and no result is causal.
 
 The full, measured list — including per-band error and the `G3 = 0` ambiguity — is in
 [docs/model_card.md](docs/model_card.md#6-limitations). Dataset-level constraints are

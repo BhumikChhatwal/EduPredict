@@ -114,6 +114,24 @@ interface shows the distance to the nearest edge next to the band.
 
 ## 5. Intended use and non-use
 
+Intended audience: secondary schools in India (grades 9–12, roughly ages 15–18). That
+is a product decision, not a property of the model. Every number in this card was
+measured on Portuguese records; no Indian data was used to fit, tune or validate any
+pipeline, and no measurement here supports a claim about Indian students.
+
+The two gaps that matter most when moving it there:
+
+- **Population.** Different curriculum, assessment pattern, language of instruction,
+  class sizes and support structures. Relationships learned in two Portuguese schools
+  need not transfer.
+- **Scale.** The target is the Portuguese 0–20 course grade. Indian boards usually
+  report marks out of 100 or a grade letter, so an estimate has to be mapped before it
+  can be read in a local report card, and the mapping is an assumption, not a result.
+
+The honest posture for an Indian deployment is: use the interface and the error
+reporting, treat the bands as triage hints, and collect local data before trusting any
+number as calibrated.
+
 Intended: exploring how intake attributes relate to final grades; flagging students
 who may benefit from support; demonstrating an honest, reproducible regression
 workflow with reported error.
@@ -124,8 +142,10 @@ other than the one measured.
 
 ## 6. Limitations
 
-1. **Small, dated, local data.** 395 and 649 rows, two Portuguese secondary schools,
-   2005–2006. There is no evidence that these relationships hold elsewhere or now.
+1. **Small, dated, local data with an unmeasured domain shift.** 395 and 649 rows, two
+   Portuguese secondary schools, 2005–2006, used for a product aimed at Indian schools.
+   There is no evidence that these relationships hold elsewhere or now, and none that
+   they hold in India at all.
 2. **One split.** The held-out figures come from a single 20% sample. CV mean and fold
    spread are the better stability estimate; both are shown in the interface.
 3. **Heteroscedastic error.** The measured error is far larger at the extremes of the

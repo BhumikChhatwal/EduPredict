@@ -55,7 +55,8 @@ export default function App() {
                 : "checking API"}
           </p>
           <p className="foot-note">
-            UCI student performance, 1,044 rows. Estimates are statistical, not decisions.
+            Built for Indian secondary schools. Trained on 1,044 public Portuguese
+            records; estimates are statistical, not decisions.
           </p>
         </footer>
       </aside>

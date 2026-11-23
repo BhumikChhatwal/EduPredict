@@ -65,7 +65,7 @@ export default function Predict() {
       <PageHeader
         eyebrow="Predict"
         title="Estimate a final grade"
-        description="Fill in what is known about the student. The estimate comes from the saved model, with its measured error and the attributes that moved it."
+        description="Fill in what is known about the student. The estimate comes from the saved model, with its measured error and the attributes that moved it. The model was trained on Portuguese school records, so read it as an early-warning aid for an Indian classroom, not a calibrated local prediction."
       />
 
       <div className="predict-layout">

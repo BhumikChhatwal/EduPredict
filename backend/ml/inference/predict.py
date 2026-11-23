@@ -225,8 +225,13 @@ def explain(
 LIMITATIONS = [
     "This is a statistical estimate from a small public dataset (395 maths, 649 "
     "Portuguese records), not a guaranteed outcome.",
-    "The dataset is cross-sectional, from two Portuguese secondary schools in 2005-2006; "
-    "it does not establish how a student at another school would perform.",
+    "The training data is from two Portuguese secondary schools in 2005-2006. This "
+    "build is intended for Indian secondary schools, whose curriculum, assessment and "
+    "student population differ, so the estimates are a planning aid there, not a "
+    "validated local prediction.",
+    "The target is the Portuguese 0-20 course grade. Indian boards usually report marks "
+    "out of 100 or a grade letter, so an estimate has to be mapped to the local scale "
+    "before it means anything in a report card.",
     "Predictions use a single held-out error figure for every student. The measured "
     "error is much larger for students at the extremes of the grade scale.",
     "Risk bands are product policy on the predicted grade, not a validated "
