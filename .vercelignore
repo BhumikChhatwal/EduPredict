@@ -1,0 +1,18 @@
+# Deployment upload filter. Sources, the serialized models, the dataset and the
+# frontend build inputs are kept; local environments, generated output and scratch
+# analysis are not sent.
+.git
+.freebuff
+.cloud-attachments
+.scratch
+.venv
+backend/.venv
+backend/.pytest_cache
+**/__pycache__
+**/*.py[cod]
+frontend/node_modules
+frontend/dist
+notebooks
+reports
+*.log
+*.db

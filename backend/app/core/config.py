@@ -8,6 +8,7 @@ its version string, where its database lives, which model it serves by default.
 from __future__ import annotations
 
 import os
+import tempfile
 from pathlib import Path
 
 from ml import config as ml_config
@@ -38,4 +39,11 @@ DB_ENV_VAR = "EDUPREDICT_DB"
 def db_path() -> Path:
     """SQLite file used for prediction history."""
     override = os.environ.get(DB_ENV_VAR)
-    return Path(override) if override else BACKEND_DIR / "edupredict.db"
+    if override:
+        return Path(override)
+    if os.environ.get("VERCEL"):
+        # A serverless filesystem is read-only apart from the temporary directory, and
+        # that directory belongs to one instance. History therefore survives while an
+        # instance stays warm and is not durable storage; the deployment notes say so.
+        return Path(tempfile.gettempdir()) / "edupredict.db"
+    return BACKEND_DIR / "edupredict.db"

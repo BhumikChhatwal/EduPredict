@@ -93,7 +93,7 @@ export default function Dashboard() {
         <MetricCard
           label="Predictions logged"
           value={data.predictions_logged}
-          detail="Stored locally; survives restart"
+          detail="Recorded in the API's SQLite history"
         />
       </div>
 
@@ -168,7 +168,7 @@ export default function Dashboard() {
 
       <ChartFrame
         title="Recent predictions"
-        subtitle="Newest first, read from the local SQLite history"
+        subtitle="Newest first, read from the API's SQLite history"
         footnote="Submissions are stored with their attributes and the model version that answered, so an estimate can be audited later."
       >
         <DataTable

@@ -136,6 +136,29 @@ npm run dev
 The dashboard is served at `http://127.0.0.1:5173` and proxies `/api` to the backend
 on port 8000.
 
+## Deployment
+
+Live at **https://edupredict-psi.vercel.app**. One Vercel project holds both halves: the
+deployment uses Vercel's FastAPI preset, so `index.py` is the single entrypoint, and the
+React build is created by the build script in `pyproject.toml` and served from the same
+function (`/assets` as static files, every other path returning `index.html`).
+
+```bash
+npx vercel@48 deploy --prod
+```
+
+Three properties of that environment are worth stating plainly:
+
+- **Dependencies** live in `pyproject.toml` (serving path only). `backend/requirements.txt`
+  remains the full local environment; the two lists are upgraded together.
+- **Prediction history** is written to the function's temporary directory, because a
+  serverless filesystem is read-only elsewhere. History therefore survives while an
+  instance stays warm and is **not durable**; restarting or scaling out starts again
+  from zero. Local runs keep using `backend/edupredict.db`.
+- **The model artifacts** are gitignored, so a deployment built from a Git import needs
+  `python -m ml.inference.serialize` run first. Deploying from the working directory
+  uploads the existing artifacts.
+
 ## Dataset
 
 UCI Machine Learning Repository, dataset 320 — *Student Performance*: 395 mathematics

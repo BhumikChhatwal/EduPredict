@@ -49,3 +49,5 @@ pipeline.log
 
 # Scratch
 .scratch/
+
+.vercel

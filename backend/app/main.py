@@ -37,11 +37,22 @@ DESCRIPTION = (
 )
 
 
+def bootstrap() -> ModelStore:
+    """Load the models and prepare storage.
+
+    Shared by the Uvicorn lifespan and the serverless entrypoint: a deployment answers
+    each request from a short-lived instance, so the same work has to be reachable at
+    import time as well as at startup. One implementation, two callers.
+    """
+    store = ModelStore().load()
+    db.init_db()
+    return store
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load models and prepare storage once, before the first request."""
-    store = ModelStore().load()
-    db.init_db()
+    store = bootstrap()
 
     app.state.models = store
     logger.info(

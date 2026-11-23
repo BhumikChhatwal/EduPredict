@@ -1,0 +1,27 @@
+# Deployment manifest for Vercel's FastAPI preset.
+#
+# `backend/requirements.txt` is the full local environment (training, figures, tests).
+# A function bundle installs the serving path only, and matplotlib, seaborn, uvicorn and
+# pytest are not on it. Versions match backend/requirements.txt; upgrade both together.
+#
+# The frontend is built by the script below and served by `index.py` through
+# `app.frontend()`, so one deployment carries both halves of the product.
+
+[project]
+name = "edupredict"
+version = "2.0.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.165.0",
+    "pydantic==2.14.4",
+    "numpy==2.5.5",
+    "pandas==2.3.3",
+    "scikit-learn==1.9.1",
+    "joblib==1.6.0",
+]
+
+[tool.vercel]
+entrypoint = "index:app"
+
+[tool.vercel.scripts]
+build = "npm --prefix frontend ci --no-audit --no-fund && npm --prefix frontend run build"
