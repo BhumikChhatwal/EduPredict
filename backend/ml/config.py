@@ -31,6 +31,9 @@ SEED = 42
 ML_DIR = Path(__file__).resolve().parent
 RAW_DIR = ML_DIR / "data" / "raw"
 ARTIFACTS_DIR = ML_DIR / "artifacts"
+# Serialized pipelines (joblib) and their JSON metadata. Build outputs, not source:
+# regenerate with `python -m ml.inference.serialize`.
+MODELS_DIR = ARTIFACTS_DIR / "models"
 # Figures live at the repository root, where the README and docs/architecture.md point.
 REPORTS_DIR = ML_DIR.parent.parent / "reports"
 
